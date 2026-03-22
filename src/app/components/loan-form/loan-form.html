@@ -1,0 +1,57 @@
+<div class="loan-card">
+
+  <h2>💰 Loan Strategy</h2>
+
+  <div class="form-grid">
+
+    <div class="form-group">
+      <label>Loan Amount (₹)</label>
+      <input type="number" [(ngModel)]="request.loanAmount">
+    </div>
+
+    <div class="form-group">
+      <label>Interest Rate (%)</label>
+      <input type="number" [(ngModel)]="request.interestRate">
+    </div>
+
+    <div class="form-group">
+      <label>Tenure (Months)</label>
+      <input type="number" [(ngModel)]="request.tenureMonths">
+    </div>
+
+    <div class="form-group">
+      <label>Extra EMI (₹)</label>
+      <input type="number" [(ngModel)]="request.extraEmi">
+    </div>
+
+    <!-- ✅ NEW PART PAYMENTS UI -->
+    <div class="form-group full-width">
+      <label>Part Payments</label>
+
+      <div *ngFor="let p of partPaymentsUI; let i = index" class="part-row">
+        
+        <input type="number"
+               placeholder="Amount (₹)"
+               [(ngModel)]="p.amount">
+
+        <input type="number"
+               placeholder="Month"
+               [(ngModel)]="p.month">
+
+        <button type="button" class="remove-btn" (click)="removeRow(i)">
+          ❌
+        </button>
+      </div>
+
+      <button type="button" class="add-btn" (click)="addRow()">
+        + Add Payment
+      </button>
+    </div>
+
+  </div>
+
+  <button class="calculate-btn" (click)="calculate()">
+    🚀 Calculate
+  </button>
+
+</div>

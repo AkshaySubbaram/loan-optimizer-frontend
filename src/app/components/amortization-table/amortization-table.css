@@ -1,0 +1,56 @@
+.amortization-container {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.amortization-container h3 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.4rem;
+}
+
+.table-container {
+  overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.amortization-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.amortization-table thead {
+  background-color: #f8f9fa;
+}
+
+.amortization-table th {
+  padding: 15px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #2c3e50;
+  border-bottom: 2px solid #dee2e6;
+  white-space: nowrap;
+}
+
+.amortization-table td {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+  text-align: right;
+}
+
+.amortization-table td:first-child {
+  text-align: center;
+  font-weight: 600;
+}
+
+.amortization-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.amortization-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}

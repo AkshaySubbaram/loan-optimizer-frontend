@@ -1,0 +1,59 @@
+<div class="top-bar">
+  <button class="back-btn" (click)="goBack()">⬅ Back</button>
+
+  <div class="actions">
+    <button class="amort-btn" (click)="viewAmortizationAll()">
+      📊 View Amortization
+    </button>
+
+    <button class="download-btn" (click)="downloadReport()">
+      ⬇ Download Report
+    </button>
+  </div>
+</div>
+<div *ngFor="let s of strategies" class="strategy-card">
+
+  <div class="strategy-content">
+
+    <!-- LEFT: STRATEGY DETAILS -->
+    <div class="strategy-details">
+      <h3 class="strategy-title">{{ s.strategy }}</h3>
+
+      <div class="details-grid">
+        <p><span>EMI</span> ₹ {{ s.emi | number }}</p>
+        <p><span>Interest Saved</span> ₹ {{ s.interestSaved | number }}</p>
+        <p><span>Tenure Reduced</span> {{ s.tenureReducedMonths }} months</p>
+        <p><span>Total Interest (Normal)</span> ₹ {{ s.totalInterestNormal | number }}</p>
+        <p><span>Total Interest (With Strategy)</span> ₹ {{ s.totalInterestWithExtra | number }}</p>
+      </div>
+    </div>
+
+    <!-- RIGHT: CHART + VALUES -->
+    <div class="chart-section">
+
+      <div class="chart-container">
+        <canvas baseChart
+                [data]="getPieChartData(s)"
+                [type]="'pie'"
+                [options]="pieChartOptions">
+        </canvas>
+      </div>
+
+      <!-- VALUES BELOW CHART -->
+      <div class="chart-values">
+        <div class="value-box principal">
+          <span>Principal</span>
+          <strong>₹ {{ request.loanAmount | number }}</strong>
+        </div>
+
+        <div class="value-box interest">
+          <span>Interest</span>
+          <strong>₹ {{ s.totalInterestWithExtra | number }}</strong>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

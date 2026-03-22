@@ -1,0 +1,36 @@
+<!-- Amortization Tables -->
+<div *ngIf="data?.length; else noData">
+
+  <div *ngFor="let strategy of data" class="amort-card">
+
+    <h2>{{ strategy.strategy }}</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th>Principal</th>
+          <th>Interest</th>
+          <th>Balance</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let row of strategy.amortization">
+          <td>{{ row.month }}</td>
+          <td>{{ row.principal }}</td>
+          <td>{{ row.interest }}</td>
+          <td>{{ row.balance }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+</div>
+
+<ng-template #noData>
+  <p style="text-align:center; margin-top:20px;">
+    No amortization data found
+  </p>
+</ng-template>

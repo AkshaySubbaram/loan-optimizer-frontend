@@ -1,0 +1,130 @@
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== BODY ===== */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #eef2f7, #d9e4f5);
+  min-height: 100vh;
+}
+
+/* ===== MAIN CONTAINER ===== */
+.app-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 30px;
+}
+
+/* ===== WRAPPER (NEW - IMPORTANT) ===== */
+.app-wrapper {
+  width: 100%;
+  max-width: 900px; /* 👈 controls layout width */
+}
+
+/* ===== GLOBAL CARD ===== */
+.card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 25px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+/* ===== HEADINGS ===== */
+h1, h2, h3 {
+  color: #2c3e50;
+}
+
+/* ===== BUTTON BASE ===== */
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0f3f7;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c5d1e0;
+  border-radius: 10px;
+}
+
+/* ===== ANIMATION ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.app-container {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 15px;
+    align-items: flex-start;
+  }
+
+  .app-wrapper {
+    max-width: 100%;
+  }
+}
+
+/* ===== HEADER ===== */
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: #2c3e50;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 1000;
+}
+
+/* ===== HOME BUTTON ===== */
+.home-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #3498db;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.home-btn:hover {
+  background: #2980b9;
+}
+
+/* ===== CONTENT OFFSET (important) ===== */
+.app-wrapper {
+  margin-top: 70px; /* prevent overlap */
+}
