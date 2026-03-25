@@ -1,0 +1,9 @@
+{
+  "/api": {
+    "target": "http://loan-strategy-calculator.local",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api": "/loan" },
+    "logLevel": "debug"
+  }
+}

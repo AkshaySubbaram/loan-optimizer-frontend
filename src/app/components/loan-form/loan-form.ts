@@ -61,8 +61,9 @@ export class LoanForm {
           state: { strategies: res, request: this.request }
         });
       },
-      error: () => {
-        alert('Error fetching loan strategies.');
+      error: (error) => {
+        console.error('Loan strategies fetch error:', error);
+        alert('Error fetching loan strategies. Check console network tab/response.');
       }
     });
   }

@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { ChartOptions } from 'chart.js';
 import { NgChartsModule } from 'ng2-charts';
+import { LoanService } from '../../services/loan.service';
 
 @Component({
   selector: 'app-strategy-list',
@@ -12,7 +12,7 @@ import { NgChartsModule } from 'ng2-charts';
   templateUrl: './strategy-list.html',
   styleUrls: ['./strategy-list.css']
 })
-export class StrategyList {
+export class StrategyList implements OnInit {
 
   strategies: any[] = [];
   request: any;
@@ -28,9 +28,13 @@ export class StrategyList {
     }
   };
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private loanService: LoanService, @Inject(PLATFORM_ID) private platformId: Object) {}
 
   ngOnInit() {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     const state = history.state;
 
     this.strategies = Array.isArray(state?.strategies)
@@ -47,25 +51,30 @@ export class StrategyList {
   }
 
   downloadReport() {
-    this.http.post('http://localhost:9898/loan/download', this.request, { responseType: 'blob' })
-      .subscribe(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'loan_report.txt';
-        a.click();
-        window.URL.revokeObjectURL(url);
-      });
+    this.loanService.downloadReport(this.request).subscribe(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'loan_report.txt';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }, error => {
+      console.error('Download error:', error);
+      alert('Download failed. See console for details.');
+    });
   }
 
   viewAmortizationAll() {
     const payload = { ...this.request, includeAmortization: true };
 
-    this.http.post('http://localhost:9898/loan/amortization', payload)
+    this.loanService.getAmortization(payload)
       .subscribe((res: any) => {
         this.router.navigate(['/amortization'], {
           state: { data: res }
         });
+      }, error => {
+        console.error('Amortization fetch error:', error);
+        alert('Amortization fetch failed. See console for details.');
       });
   }
 
