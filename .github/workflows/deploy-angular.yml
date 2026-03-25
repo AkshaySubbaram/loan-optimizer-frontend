@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 env:
-  IMAGE_NAME: <your-dockerhub-user>/<your-app-name>
-  K8S_NAMESPACE: <namespace>
+  IMAGE_NAME: akshaysubbaram/loan-frontend
+  K8S_NAMESPACE: dev
   K8S_DEPLOYMENT: angular-frontend
   K8S_IMAGE_TAG: ${{ github.sha }}
 
