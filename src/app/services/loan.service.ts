@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { LoanRequest } from '../models/loan-request';
 import { LoanResponse } from '../models/loan-response';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoanService {
 
-  private baseUrl = 'http://localhost:9898/loan';
+  private baseUrl = `${environment.apiBaseUrl}`;
 
   constructor(private http: HttpClient) {}
 
