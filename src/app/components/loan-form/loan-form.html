@@ -233,7 +233,7 @@
           </div>
 
           <div *ngIf="loanItems.length === 0" class="empty-state">
-            No loans added.
+            No loans added
           </div>
 
           <div *ngFor="let loan of loanItems; let i = index" class="dynamic-row loan-row" [class.row-error]="isLoanItemInvalid(i)">

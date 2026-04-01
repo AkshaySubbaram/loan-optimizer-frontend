@@ -66,8 +66,14 @@ jobs:
 
       - name: Configure kubeconfig
         run: |
+          test -n "${{ secrets.KUBE_CONFIG_DATA }}"
           echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 --decode > kubeconfig
-          export KUBECONFIG=$PWD/kubeconfig
+          echo "KUBECONFIG=$PWD/kubeconfig" >> $GITHUB_ENV
+
+      - name: Verify cluster access
+        run: |
+          kubectl config current-context
+          kubectl get nodes
 
       - name: Deploy to Kubernetes
         run: |
