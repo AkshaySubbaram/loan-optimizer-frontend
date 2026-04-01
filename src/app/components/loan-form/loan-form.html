@@ -1,57 +1,275 @@
-<div class="loan-card">
-
-  <h2>💰 Loan Strategy</h2>
-
-  <div class="form-grid">
-
-    <div class="form-group">
-      <label>Loan Amount (₹)</label>
-      <input type="number" [(ngModel)]="request.loanAmount">
+<section class="loan-page">
+  <div class="hero-panel">
+    <div class="hero-copy">
+      <span class="eyebrow">Loan Strategy Studio</span>
+      <h1>Plan smarter loan repayment.</h1>
+      <p>
+        Choose the calculation mode, enter your details, and quickly compare the best way to reduce
+        EMI pressure, interest, or tenure.
+      </p>
     </div>
 
-    <div class="form-group">
-      <label>Interest Rate (%)</label>
-      <input type="number" [(ngModel)]="request.interestRate">
-    </div>
-
-    <div class="form-group">
-      <label>Tenure (Months)</label>
-      <input type="number" [(ngModel)]="request.tenureMonths">
-    </div>
-
-    <div class="form-group">
-      <label>Extra EMI (₹)</label>
-      <input type="number" [(ngModel)]="request.extraEmi">
-    </div>
-
-    <!-- ✅ NEW PART PAYMENTS UI -->
-    <div class="form-group full-width">
-      <label>Part Payments</label>
-
-      <div *ngFor="let p of partPaymentsUI; let i = index" class="part-row">
-        
-        <input type="number"
-               placeholder="Amount (₹)"
-               [(ngModel)]="p.amount">
-
-        <input type="number"
-               placeholder="Month"
-               [(ngModel)]="p.month">
-
-        <button type="button" class="remove-btn" (click)="removeRow(i)">
-          ❌
-        </button>
+    <div class="hero-focus">
+      <div class="focus-card primary">
+        <span>Best Use</span>
+        <strong>Pick your mode first</strong>
+        <small>Normal for one loan, expense-based for salary and multiple loans.</small>
       </div>
 
-      <button type="button" class="add-btn" (click)="addRow()">
-        + Add Payment
+      <div class="focus-card">
+        <span>Outcome</span>
+        <strong>Clear repayment direction</strong>
+        <small>Useful advice, loan priority, amortization, and report download.</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="loan-card">
+    <div class="card-header">
+      <div>
+        <span class="card-kicker">Repayment Setup</span>
+        <h2>Build Your Loan Plan</h2>
+        <p>Fill in the details below and calculate the best strategy for your situation.</p>
+      </div>
+    </div>
+
+    <div class="mode-switcher">
+      <button
+        type="button"
+        class="mode-option"
+        [class.active]="!useIncomeStrategy"
+        (click)="useIncomeStrategy = false">
+        <span class="mode-icon">N</span>
+        <span class="mode-content">
+          <strong>Normal Loan</strong>
+          <small>Direct EMI and part-payment calculation</small>
+        </span>
+      </button>
+
+      <button
+        type="button"
+        class="mode-option income"
+        [class.active]="useIncomeStrategy"
+        (click)="useIncomeStrategy = true">
+        <span class="mode-icon">I</span>
+        <span class="mode-content">
+          <strong>Expense-Based Strategy</strong>
+          <small>Uses income, expenses, loans, and emergency fund</small>
+        </span>
       </button>
     </div>
 
+    <div class="mode-banner" [class.income-mode]="useIncomeStrategy">
+      <strong>{{ useIncomeStrategy ? 'Income-based mode is active' : 'Normal loan mode is active' }}</strong>
+      <span>
+        {{ useIncomeStrategy
+          ? 'Add your income, expenses, and loan portfolio to get a practical payoff recommendation.'
+          : 'Enter your loan details, extra EMI, and part payments to compare repayment strategies.' }}
+      </span>
+    </div>
+
+    <div class="form-grid">
+      <div *ngIf="!useIncomeStrategy" class="section-shell">
+        <div class="section-header">
+          <h3>Loan Inputs</h3>
+          <p>Start with the core loan details and optional prepayments.</p>
+        </div>
+
+        <div class="field-grid">
+          <div class="form-group">
+            <label>Loan Amount (Rs)</label>
+            <input type="number" [(ngModel)]="request.loanAmount" placeholder=" ₹ Enter loan amount ">
+          </div>
+
+          <div class="form-group">
+            <label>Interest Rate (%)</label>
+            <input type="number" [(ngModel)]="request.interestRate" placeholder="e.g., 8.5">
+          </div>
+
+          <div class="form-group">
+            <label>Tenure (Months)</label>
+            <input type="number" [(ngModel)]="request.tenureMonths" placeholder="e.g., 180">
+          </div>
+
+          <div class="form-group">
+            <label>Extra EMI (Rs)</label>
+            <input type="number" [(ngModel)]="request.extraEmi" placeholder="e.g., 2500">
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <div class="subsection-title">
+            <div>
+              <label>Part Payments</label>
+              <p>Add one or more lump-sum payments at specific months.</p>
+            </div>
+            <button type="button" class="add-btn" (click)="addRow()">+ Add Payment</button>
+          </div>
+
+          <div *ngIf="partPaymentsUI.length === 0" class="empty-state">
+            No part payments added yet. Add one if you want to simulate occasional prepayments.
+          </div>
+
+          <div *ngFor="let p of partPaymentsUI; let i = index" class="part-row">
+            <input type="number" placeholder="Amount (Rs)" [(ngModel)]="p.amount">
+            <input type="number" placeholder="Month" [(ngModel)]="p.month">
+            <button type="button" class="remove-btn" (click)="removeRow(i)">Remove</button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="useIncomeStrategy" class="section-shell">
+        <div class="section-header">
+          <h3>Income-Based Inputs</h3>
+          <p>Tell us about your cash flow, emergency fund, and active loans.</p>
+        </div>
+
+        <div class="field-grid">
+          <div class="form-group">
+            <label>Monthly Income (Rs)</label>
+            <input
+              type="number"
+              [(ngModel)]="expenseRequest.monthlyIncome"
+              required
+              #monthlyIncome="ngModel"
+              placeholder="e.g., 75000"
+              [class.input-error]="isExpenseFieldInvalid(expenseRequest.monthlyIncome) && monthlyIncome.touched">
+          </div>
+
+          <div class="form-group">
+            <label>Emergency Fund (Rs)</label>
+            <input
+              type="number"
+              [(ngModel)]="expenseRequest.emergencyFund"
+              placeholder="e.g., 50000"
+              [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFund) && monthlyIncome.touched">
+          </div>
+
+          <div class="form-group">
+            <label>Emergency Fund Target (Rs)</label>
+            <input
+              type="number"
+              [(ngModel)]="expenseRequest.emergencyFundTarget"
+              placeholder="e.g., 100000"
+              [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFundTarget) && monthlyIncome.touched">
+          </div>
+
+          <div class="form-group">
+            <label>Emergency Fund Months</label>
+            <input
+              type="number"
+              [(ngModel)]="expenseRequest.emergencyFundMonths"
+              placeholder="e.g., 12"
+              [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFundMonths) && monthlyIncome.touched">
+          </div>
+
+          <div class="form-group">
+            <label>Risk Profile</label>
+            <select
+              [(ngModel)]="expenseRequest.riskProfile"
+              [class.input-error]="isExpenseFieldInvalid(expenseRequest.riskProfile)">
+              <option value="low">low</option>
+              <option value="medium">medium</option>
+              <option value="high">high</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Goal</label>
+            <select
+              [(ngModel)]="expenseRequest.goal"
+              [class.input-error]="isExpenseFieldInvalid(expenseRequest.goal)">
+              <option value="LOW_EMI">LOW_EMI</option>
+              <option value="MIN_INTEREST">MIN_INTEREST</option>
+              <option value="SHORT_TENURE">SHORT_TENURE</option>
+            </select>
+          </div>
+        </div>
+
+        <p *ngIf="hasTriedSubmit && !expenseRequest.monthlyIncome" class="validation-note">
+          Fill in the required expense-based fields before calculating.
+        </p>
+
+        <div class="collection-card">
+          <div class="subsection-title">
+            <div>
+              <label>Expenses</label>
+              <p>Add monthly recurring expenses that affect disposable income.</p>
+            </div>
+            <button type="button" class="add-btn" (click)="expenseItems.push({ name: '', amount: null })">+ Add Expense</button>
+          </div>
+
+          <div *ngIf="expenseItems.length === 0" class="empty-state">
+            No expenses added.
+          </div>
+
+          <div *ngFor="let exp of expenseItems; let i = index" class="dynamic-row" [class.row-error]="isExpenseItemInvalid(i)">
+            <input
+              type="text"
+              placeholder="Expense Name"
+              [(ngModel)]="exp.name"
+              [class.input-error]="isExpenseItemInvalid(i) && !exp.name">
+            <input
+              type="number"
+              placeholder="Amount"
+              [(ngModel)]="exp.amount"
+              [class.input-error]="isExpenseItemInvalid(i) && (exp.amount === null || exp.amount === undefined)">
+            <button type="button" class="remove-btn" (click)="expenseItems.splice(i, 1)">Remove</button>
+          </div>
+        </div>
+
+        <div class="collection-card">
+          <div class="subsection-title">
+            <div>
+              <label>Existing Loans</label>
+              <p>Add all active loans so the strategy can prioritize them correctly.</p>
+            </div>
+            <button
+              type="button"
+              class="add-btn"
+              (click)="loanItems.push({ loanName: '', loanAmount: null, interestRate: null, tenureMonths: null })">
+              + Add Loan
+            </button>
+          </div>
+
+          <div *ngIf="loanItems.length === 0" class="empty-state">
+            No loans added.
+          </div>
+
+          <div *ngFor="let loan of loanItems; let i = index" class="dynamic-row loan-row" [class.row-error]="isLoanItemInvalid(i)">
+            <input
+              type="text"
+              placeholder="Loan Name"
+              [(ngModel)]="loan.loanName"
+              [class.input-error]="isLoanItemInvalid(i) && !loan.loanName">
+            <input
+              type="number"
+              placeholder="Loan Amount"
+              [(ngModel)]="loan.loanAmount"
+              [class.input-error]="isLoanItemInvalid(i) && (loan.loanAmount === null || loan.loanAmount === undefined)">
+            <input
+              type="number"
+              placeholder="Rate of Interest"
+              [(ngModel)]="loan.interestRate"
+              [class.input-error]="isLoanItemInvalid(i) && (loan.interestRate === null || loan.interestRate === undefined)">
+            <input
+              type="number"
+              placeholder="Tenure (Months)"
+              [(ngModel)]="loan.tenureMonths"
+              [class.input-error]="isLoanItemInvalid(i) && (loan.tenureMonths === null || loan.tenureMonths === undefined)">
+            <button type="button" class="remove-btn" (click)="loanItems.splice(i, 1)">Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <div class="action-copy">
+        <strong>Ready to compare strategies?</strong>
+        <span>We’ll calculate the best repayment options based on the mode you selected.</span>
+      </div>
+
+      <button class="calculate-btn" (click)="calculate()">Calculate Strategy</button>
+    </div>
   </div>
-
-  <button class="calculate-btn" (click)="calculate()">
-    🚀 Calculate
-  </button>
-
-</div>
+</section>

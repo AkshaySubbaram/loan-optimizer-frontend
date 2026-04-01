@@ -1,9 +1,30 @@
 {
-  "/api": {
-    "target": "http://loan-strategy-calculator.local",
+  "/api/strategy": {
+    "target": "http://localhost:8089",
     "secure": false,
     "changeOrigin": true,
-    "pathRewrite": { "^/api": "/loan" },
+    "pathRewrite": { "^/api/strategy": "/loan/strategy" },
+    "logLevel": "debug"
+  },
+  "/api/summary": {
+    "target": "http://localhost:8089",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api/summary": "/loan/summary" },
+    "logLevel": "debug"
+  },
+  "/api/amortization": {
+    "target": "http://localhost:8089",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api/amortization": "/loan/amortization" },
+    "logLevel": "debug"
+  },
+  "/api/download": {
+    "target": "http://localhost:8089",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api/download": "/loan/download" },
     "logLevel": "debug"
   }
 }

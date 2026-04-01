@@ -18,6 +18,11 @@ export class LoanService {
     return this.http.post<LoanResponse[]>(`${this.baseUrl}/summary`, req);
   }
 
+  getExpenseStrategy(req: LoanRequest): Observable<any> {
+    // Backend should handle `useIncomeStrategy` + `expenseRequest` payload.
+    return this.http.post<any>(`${this.baseUrl}/strategy`, req);
+  }
+
   getAmortization(req: LoanRequest): Observable<LoanResponse[]> {
     return this.http.post<LoanResponse[]>(`${this.baseUrl}/amortization`, req);
   }

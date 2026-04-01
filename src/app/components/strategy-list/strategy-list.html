@@ -1,59 +1,145 @@
 <div class="top-bar">
-  <button class="back-btn" (click)="goBack()">⬅ Back</button>
+  <button class="home-btn" (click)="goBack()">
+    <span class="home-btn-icon">⌂</span>
+    <span class="home-btn-copy">
+      <strong>Go Home</strong>
+      <small>Return to loan calculator</small>
+    </span>
+    <span class="home-btn-arrow">←</span>
+  </button>
+
+  <div style="margin-left: 20px; font-weight: 600; color: #333;">
+    Strategy mode: {{ request?.useIncomeStrategy ? 'Expense/Income-Driven' : 'Normal Loan' }}
+  </div>
 
   <div class="actions">
-    <button class="amort-btn" (click)="viewAmortizationAll()">
-      📊 View Amortization
-    </button>
-
     <button class="download-btn" (click)="downloadReport()">
-      ⬇ Download Report
+      Download Report
     </button>
   </div>
 </div>
+
+<div *ngIf="advice" class="advice-panel">
+  <div class="advice-hero">
+    <div>
+      <span class="advice-eyebrow">Smart Repayment Advice</span>
+      <h3>Your Best Plan</h3>
+      <p class="advice-summary">{{ advice.summary }}</p>
+    </div>
+
+    <div *ngIf="recommendedStrategy" class="advice-highlight">
+      <span>Recommended</span>
+      <strong>{{ recommendedStrategy.strategy }}</strong>
+      <small>EMI Rs {{ recommendedStrategy.emi | number }}</small>
+    </div>
+  </div>
+
+  <div class="advice-metrics">
+    <div class="metric-card">
+      <span>Extra EMI</span>
+      <strong>Rs {{ advice.extraEmiRecommended | number }}</strong>
+    </div>
+
+    <div class="metric-card">
+      <span>Loan Count</span>
+      <strong>{{ getLoanCount() || 1 }}</strong>
+    </div>
+
+    <div *ngIf="recommendedStrategy" class="metric-card">
+      <span>Interest Saved</span>
+      <strong>Rs {{ recommendedStrategy.interestSaved | number }}</strong>
+    </div>
+
+    <div *ngIf="recommendedStrategy" class="metric-card">
+      <span>Tenure Reduced</span>
+      <strong>{{ recommendedStrategy.tenureReducedMonths }} mo</strong>
+    </div>
+  </div>
+
+  <div *ngIf="loanPriority.length" class="priority-strip">
+    <div class="priority-header">
+      <h4>Loan Priority</h4>
+      <span>Pay extra toward these loans in this order</span>
+    </div>
+
+    <div class="priority-list">
+      <div *ngFor="let item of loanPriority; let i = index" class="priority-item">
+        <div class="priority-rank">{{ i + 1 }}</div>
+        <div class="priority-copy">
+          <strong>{{ getPriorityTitle(item) }}</strong>
+          <span>{{ getPriorityNote(item) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="advice-grid">
+    <div *ngIf="adviceContext.length" class="advice-block">
+      <h4>Your Situation</h4>
+      <p *ngFor="let item of adviceContext">{{ item }}</p>
+    </div>
+
+    <div *ngIf="paymentPlan.length" class="advice-block accent-block">
+      <h4>How To Pay</h4>
+      <p *ngFor="let item of paymentPlan">{{ item }}</p>
+    </div>
+
+    <div *ngIf="adviceSteps.length" class="advice-block full-span">
+      <h4>What You Should Do</h4>
+      <p *ngFor="let item of adviceSteps">{{ item }}</p>
+    </div>
+
+    <div *ngIf="reason" class="advice-block full-span subtle-block">
+      <h4>Why This Was Recommended</h4>
+      <p>{{ reason }}</p>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="recommendedStrategy" class="recommended-panel">
+  <h3>Recommended Strategy</h3>
+  <p>{{ recommendedStrategy.strategy }} - EMI Rs {{ recommendedStrategy.emi | number }}</p>
+</div>
+
+<div *ngIf="strategies.length === 0" class="no-strategies">
+  <p>No strategies returned. Please check strategy request inputs or backend response.</p>
+</div>
+
 <div *ngFor="let s of strategies" class="strategy-card">
-
   <div class="strategy-content">
-
-    <!-- LEFT: STRATEGY DETAILS -->
     <div class="strategy-details">
       <h3 class="strategy-title">{{ s.strategy }}</h3>
 
       <div class="details-grid">
-        <p><span>EMI</span> ₹ {{ s.emi | number }}</p>
-        <p><span>Interest Saved</span> ₹ {{ s.interestSaved | number }}</p>
+        <p><span>EMI</span> Rs {{ s.emi | number }}</p>
+        <p><span>Interest Saved</span> Rs {{ s.interestSaved | number }}</p>
         <p><span>Tenure Reduced</span> {{ s.tenureReducedMonths }} months</p>
-        <p><span>Total Interest (Normal)</span> ₹ {{ s.totalInterestNormal | number }}</p>
-        <p><span>Total Interest (With Strategy)</span> ₹ {{ s.totalInterestWithExtra | number }}</p>
+        <p><span>Total Interest (Normal)</span> Rs {{ s.totalInterestNormal | number }}</p>
+        <p><span>Total Interest (With Strategy)</span> Rs {{ s.totalInterestWithExtra | number }}</p>
       </div>
     </div>
 
-    <!-- RIGHT: CHART + VALUES -->
     <div class="chart-section">
-
       <div class="chart-container">
-        <canvas baseChart
-                [data]="getPieChartData(s)"
-                [type]="'pie'"
-                [options]="pieChartOptions">
+        <canvas
+          baseChart
+          [data]="getPieChartData(s)"
+          [type]="'pie'"
+          [options]="pieChartOptions">
         </canvas>
       </div>
 
-      <!-- VALUES BELOW CHART -->
       <div class="chart-values">
         <div class="value-box principal">
           <span>Principal</span>
-          <strong>₹ {{ request.loanAmount | number }}</strong>
+          <strong>Rs {{ getPrincipalAmount() | number }}</strong>
         </div>
 
         <div class="value-box interest">
           <span>Interest</span>
-          <strong>₹ {{ s.totalInterestWithExtra | number }}</strong>
+          <strong>Rs {{ s.totalInterestWithExtra | number }}</strong>
         </div>
       </div>
-
     </div>
-
   </div>
-
 </div>
