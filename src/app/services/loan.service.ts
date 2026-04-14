@@ -27,8 +27,26 @@ export class LoanService {
     return this.http.post<LoanResponse[]>(`${this.baseUrl}/amortization`, req);
   }
 
-  downloadReport(req: LoanRequest) {
+  downloadReport(req: LoanRequest | any) {
     return this.http.post(`${this.baseUrl}/download`, req, {
+      responseType: 'blob'
+    });
+  }
+
+  downloadReportPdf(req: LoanRequest | any) {
+    return this.http.post(`${this.baseUrl}/download/pdf`, req, {
+      responseType: 'blob'
+    });
+  }
+
+  downloadStrategyReport(req: LoanRequest | any) {
+    return this.http.post(`${this.baseUrl}/strategy/download`, req, {
+      responseType: 'blob'
+    });
+  }
+
+  downloadStrategyReportPdf(req: LoanRequest | any) {
+    return this.http.post(`${this.baseUrl}/strategy/download/pdf`, req, {
       responseType: 'blob'
     });
   }

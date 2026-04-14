@@ -8,6 +8,7 @@ export interface ExistingLoanItem {
   loanAmount: number | null;
   interestRate: number | null;
   tenureMonths: number | null;
+  sanctionDate?: string | null;
 }
 
 export interface ExpenseRequest {

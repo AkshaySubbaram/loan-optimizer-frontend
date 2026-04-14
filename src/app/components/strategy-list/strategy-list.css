@@ -201,6 +201,14 @@
   background: #27ae60;
 }
 
+.download-btn.pdf {
+  background: #d35400;
+}
+
+.download-btn.pdf:hover {
+  background: #b94700;
+}
+
 .advice-panel,
 .recommended-panel,
 .insight-panel,

@@ -78,22 +78,22 @@
         <div class="field-grid">
           <div class="form-group">
             <label>Loan Amount (Rs)</label>
-            <input type="number" [(ngModel)]="request.loanAmount" placeholder=" ₹ Enter loan amount ">
+            <input type="number" [(ngModel)]="request.loanAmount" placeholder="Enter loan amount" (keydown)="preventInvalidNumberInput($event)" (input)="sanitizeNumericField($event)">
           </div>
 
           <div class="form-group">
             <label>Interest Rate (%)</label>
-            <input type="number" [(ngModel)]="request.interestRate" placeholder="e.g., 8.5">
+            <input type="number" [(ngModel)]="request.interestRate" placeholder="e.g., 8.5" (keydown)="preventInvalidNumberInput($event)" (input)="sanitizeNumericField($event)">
           </div>
 
           <div class="form-group">
             <label>Tenure (Months)</label>
-            <input type="number" [(ngModel)]="request.tenureMonths" placeholder="e.g., 180">
+            <input type="number" [(ngModel)]="request.tenureMonths" placeholder="e.g., 180" (keydown)="preventInvalidNumberInput($event)" (input)="sanitizeNumericField($event)">
           </div>
 
           <div class="form-group">
             <label>Extra EMI (Rs)</label>
-            <input type="number" [(ngModel)]="request.extraEmi" placeholder="e.g., 2500">
+            <input type="number" [(ngModel)]="request.extraEmi" placeholder="e.g., 2500" (keydown)="preventInvalidNumberInput($event)" (input)="sanitizeNumericField($event)">
           </div>
         </div>
 
@@ -111,8 +111,8 @@
           </div>
 
           <div *ngFor="let p of partPaymentsUI; let i = index" class="part-row">
-            <input type="number" placeholder="Amount (Rs)" [(ngModel)]="p.amount">
-            <input type="number" placeholder="Month" [(ngModel)]="p.month">
+            <input type="number" placeholder="Amount (Rs)" [(ngModel)]="p.amount" (keydown)="preventInvalidNumberInput($event)" (input)="sanitizeNumericField($event)">
+            <input type="number" placeholder="Month" [(ngModel)]="p.month" (keydown)="preventInvalidNumberInput($event)" (input)="sanitizeNumericField($event)">
             <button type="button" class="remove-btn" (click)="removeRow(i)">Remove</button>
           </div>
         </div>
@@ -124,65 +124,95 @@
           <p>Tell us about your cash flow, emergency fund, and active loans.</p>
         </div>
 
-        <div class="field-grid">
-          <div class="form-group">
-            <label>Monthly Income (Rs)</label>
-            <input
-              type="number"
-              [(ngModel)]="expenseRequest.monthlyIncome"
-              required
-              #monthlyIncome="ngModel"
-              placeholder="e.g., 75000"
-              [class.input-error]="isExpenseFieldInvalid(expenseRequest.monthlyIncome) && monthlyIncome.touched">
+        <div class="strategy-layout">
+          <div class="collection-card profile-card">
+            <div class="subsection-title">
+              <div>
+                <label>Financial Profile</label>
+                <p>Capture income and safety buffer before planning prepayments.</p>
+              </div>
+            </div>
+
+            <div class="field-grid">
+              <div class="form-group">
+                <label>Monthly Income (Rs)</label>
+                <input
+                  type="number"
+                  [(ngModel)]="expenseRequest.monthlyIncome"
+                  required
+                  #monthlyIncome="ngModel"
+                  placeholder="e.g., 2,00,000"
+                  (keydown)="preventInvalidNumberInput($event)"
+                  (input)="sanitizeNumericField($event)"
+                  [class.input-error]="isExpenseFieldInvalid(expenseRequest.monthlyIncome) && monthlyIncome.touched">
+              </div>
+
+              <div class="form-group">
+                <label>Emergency Fund (Rs)</label>
+                <input
+                  type="number"
+                  [(ngModel)]="expenseRequest.emergencyFund"
+                  placeholder="e.g., 50,000"
+                  (keydown)="preventInvalidNumberInput($event)"
+                  (input)="sanitizeNumericField($event)"
+                  [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFund) && monthlyIncome.touched">
+              </div>
+
+              <div class="form-group">
+                <label>Emergency Fund Target (Rs)</label>
+                <input
+                  type="number"
+                  [(ngModel)]="expenseRequest.emergencyFundTarget"
+                  placeholder="e.g., 1,00,000"
+                  (keydown)="preventInvalidNumberInput($event)"
+                  (input)="sanitizeNumericField($event)"
+                  [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFundTarget) && monthlyIncome.touched">
+              </div>
+
+              <div class="form-group">
+                <label>Emergency Fund Months</label>
+                <input
+                  type="number"
+                  [(ngModel)]="expenseRequest.emergencyFundMonths"
+                  placeholder="e.g., 12"
+                  (keydown)="preventInvalidNumberInput($event)"
+                  (input)="sanitizeNumericField($event)"
+                  [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFundMonths) && monthlyIncome.touched">
+              </div>
+            </div>
           </div>
 
-          <div class="form-group">
-            <label>Emergency Fund (Rs)</label>
-            <input
-              type="number"
-              [(ngModel)]="expenseRequest.emergencyFund"
-              placeholder="e.g., 50000"
-              [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFund) && monthlyIncome.touched">
-          </div>
+          <div class="collection-card profile-card accent-card">
+            <div class="subsection-title">
+              <div>
+                <label>Strategy Preferences</label>
+                <p>Set how aggressive or comfort-first the recommendation should be.</p>
+              </div>
+            </div>
 
-          <div class="form-group">
-            <label>Emergency Fund Target (Rs)</label>
-            <input
-              type="number"
-              [(ngModel)]="expenseRequest.emergencyFundTarget"
-              placeholder="e.g., 100000"
-              [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFundTarget) && monthlyIncome.touched">
-          </div>
+            <div class="field-grid compact-grid">
+              <div class="form-group">
+                <label>Risk Profile</label>
+                <select
+                  [(ngModel)]="expenseRequest.riskProfile"
+                  [class.input-error]="isExpenseFieldInvalid(expenseRequest.riskProfile)">
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
 
-          <div class="form-group">
-            <label>Emergency Fund Months</label>
-            <input
-              type="number"
-              [(ngModel)]="expenseRequest.emergencyFundMonths"
-              placeholder="e.g., 12"
-              [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFundMonths) && monthlyIncome.touched">
-          </div>
-
-          <div class="form-group">
-            <label>Risk Profile</label>
-            <select
-              [(ngModel)]="expenseRequest.riskProfile"
-              [class.input-error]="isExpenseFieldInvalid(expenseRequest.riskProfile)">
-              <option value="low">low</option>
-              <option value="medium">medium</option>
-              <option value="high">high</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Goal</label>
-            <select
-              [(ngModel)]="expenseRequest.goal"
-              [class.input-error]="isExpenseFieldInvalid(expenseRequest.goal)">
-              <option value="LOW_EMI">LOW_EMI</option>
-              <option value="MIN_INTEREST">MIN_INTEREST</option>
-              <option value="SHORT_TENURE">SHORT_TENURE</option>
-            </select>
+              <div class="form-group">
+                <label>Goal</label>
+                <select
+                  [(ngModel)]="expenseRequest.goal"
+                  [class.input-error]="isExpenseFieldInvalid(expenseRequest.goal)">
+                  <option value="LOW_EMI">Lower EMI</option>
+                  <option value="MIN_INTEREST">Minimize Interest</option>
+                  <option value="SHORT_TENURE">Close Faster</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -213,6 +243,8 @@
               type="number"
               placeholder="Amount"
               [(ngModel)]="exp.amount"
+              (keydown)="preventInvalidNumberInput($event)"
+              (input)="sanitizeNumericField($event)"
               [class.input-error]="isExpenseItemInvalid(i) && (exp.amount === null || exp.amount === undefined)">
             <button type="button" class="remove-btn" (click)="expenseItems.splice(i, 1)">Remove</button>
           </div>
@@ -222,12 +254,12 @@
           <div class="subsection-title">
             <div>
               <label>Existing Loans</label>
-              <p>Add all active loans so the strategy can prioritize them correctly.</p>
+              <p>Add all active loans. Sanction date is optional.</p>
             </div>
             <button
               type="button"
               class="add-btn"
-              (click)="loanItems.push({ loanName: '', loanAmount: null, interestRate: null, tenureMonths: null })">
+              (click)="loanItems.push({ loanName: '', loanAmount: null, interestRate: null, tenureMonths: null, sanctionDate: null })">
               + Add Loan
             </button>
           </div>
@@ -236,28 +268,47 @@
             No loans added
           </div>
 
-          <div *ngFor="let loan of loanItems; let i = index" class="dynamic-row loan-row" [class.row-error]="isLoanItemInvalid(i)">
-            <input
-              type="text"
-              placeholder="Loan Name"
-              [(ngModel)]="loan.loanName"
-              [class.input-error]="isLoanItemInvalid(i) && !loan.loanName">
-            <input
-              type="number"
-              placeholder="Loan Amount"
-              [(ngModel)]="loan.loanAmount"
-              [class.input-error]="isLoanItemInvalid(i) && (loan.loanAmount === null || loan.loanAmount === undefined)">
-            <input
-              type="number"
-              placeholder="Rate of Interest"
-              [(ngModel)]="loan.interestRate"
-              [class.input-error]="isLoanItemInvalid(i) && (loan.interestRate === null || loan.interestRate === undefined)">
-            <input
-              type="number"
-              placeholder="Tenure (Months)"
-              [(ngModel)]="loan.tenureMonths"
-              [class.input-error]="isLoanItemInvalid(i) && (loan.tenureMonths === null || loan.tenureMonths === undefined)">
-            <button type="button" class="remove-btn" (click)="loanItems.splice(i, 1)">Remove</button>
+          <div *ngFor="let loan of loanItems; let i = index" class="loan-entry" [class.row-error]="isLoanItemInvalid(i)">
+            <div class="loan-entry-header">
+              <div>
+                <strong>Loan {{ i + 1 }}</strong>
+                <span>Enter the loan details exactly as sanctioned.</span>
+              </div>
+              <button type="button" class="remove-btn" (click)="loanItems.splice(i, 1)">Remove</button>
+            </div>
+
+            <div class="loan-entry-grid">
+              <input
+                type="text"
+                placeholder="Loan Name"
+                [(ngModel)]="loan.loanName"
+                [class.input-error]="isLoanItemInvalid(i) && !loan.loanName">
+              <input
+                type="number"
+                placeholder="Loan Amount"
+                [(ngModel)]="loan.loanAmount"
+                (keydown)="preventInvalidNumberInput($event)"
+                (input)="sanitizeNumericField($event)"
+                [class.input-error]="isLoanItemInvalid(i) && (loan.loanAmount === null || loan.loanAmount === undefined)">
+              <input
+                type="number"
+                placeholder="Interest Rate (%)"
+                [(ngModel)]="loan.interestRate"
+                (keydown)="preventInvalidNumberInput($event)"
+                (input)="sanitizeNumericField($event)"
+                [class.input-error]="isLoanItemInvalid(i) && (loan.interestRate === null || loan.interestRate === undefined)">
+              <input
+                type="number"
+                placeholder="Tenure (Months)"
+                [(ngModel)]="loan.tenureMonths"
+                (keydown)="preventInvalidNumberInput($event)"
+                (input)="sanitizeNumericField($event)"
+                [class.input-error]="isLoanItemInvalid(i) && (loan.tenureMonths === null || loan.tenureMonths === undefined)">
+              <input
+                type="date"
+                [(ngModel)]="loan.sanctionDate"
+                >
+            </div>
           </div>
         </div>
       </div>
@@ -266,7 +317,7 @@
     <div class="action-bar">
       <div class="action-copy">
         <strong>Ready to compare strategies?</strong>
-        <span>We’ll calculate the best repayment options based on the mode you selected.</span>
+        <span>We'll calculate the best repayment options based on the mode you selected.</span>
       </div>
 
       <button class="calculate-btn" (click)="calculate()">Calculate Strategy</button>
