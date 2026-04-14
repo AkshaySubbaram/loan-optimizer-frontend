@@ -270,6 +270,16 @@
   gap: 12px;
 }
 
+.strategy-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.95fr);
+  gap: 12px;
+}
+
+.compact-grid {
+  grid-template-columns: 1fr;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -345,6 +355,43 @@ select:focus {
   border: 1px solid rgba(20, 41, 36, 0.06);
 }
 
+.profile-card {
+  margin-top: 0;
+}
+
+.accent-card {
+  background:
+    radial-gradient(circle at top right, rgba(68, 153, 255, 0.1), transparent 34%),
+    linear-gradient(180deg, #f7fbff, #ffffff);
+}
+
+.strategy-hint-grid {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.hint-chip {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(32, 77, 118, 0.08);
+}
+
+.hint-chip span,.hint-chip strong { display: block; }
+
+.hint-chip span {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #5f7590;
+}
+
+.hint-chip strong {
+  margin-top: 4px;
+  color: #204d76;
+  font-size: 14px;
+}
+
 .dynamic-row,
 .part-row {
   display: grid;
@@ -361,8 +408,42 @@ select:focus {
   grid-template-columns: minmax(160px, 1.4fr) minmax(120px, 1fr) auto;
 }
 
-.loan-row {
-  grid-template-columns: minmax(150px, 1.4fr) minmax(120px, 1fr) minmax(100px, 0.9fr) minmax(100px, 0.9fr) auto;
+.loan-entry {
+  margin-bottom: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  background: #fbfdfd;
+  border: 1px solid rgba(20, 41, 36, 0.08);
+}
+
+.loan-entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.loan-entry-header strong,
+.loan-entry-header span {
+  display: block;
+}
+
+.loan-entry-header strong {
+  color: #18392f;
+  font-size: 14px;
+}
+
+.loan-entry-header span {
+  margin-top: 3px;
+  color: #6d817a;
+  font-size: 12px;
+}
+
+.loan-entry-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
 }
 
 .empty-state {
@@ -479,15 +560,17 @@ select:focus {
     grid-template-columns: 1fr;
   }
 
+  .strategy-layout,
   .field-grid,
   .part-row,
   .dynamic-row,
-  .loan-row {
+  .loan-entry-grid {
     grid-template-columns: 1fr;
   }
 
   .subsection-title,
-  .mode-banner {
+  .mode-banner,
+  .loan-entry-header {
     flex-direction: column;
   }
 

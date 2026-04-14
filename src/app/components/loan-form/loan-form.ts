@@ -40,23 +40,39 @@ export class LoanForm {
 
   partPaymentsUI: { amount: number | null; month: number | null }[] = [];
   expenseItems: { name: string; amount: number | null }[] = [{ name: '', amount: null }];
-  loanItems: { loanName: string; loanAmount: number | null; interestRate: number | null; tenureMonths: number | null }[] = [
-    { loanName: '', loanAmount: null, interestRate: null, tenureMonths: null }
+  loanItems: { loanName: string; loanAmount: number | null; interestRate: number | null; tenureMonths: number | null; sanctionDate: string | null }[] = [
+    { loanName: '', loanAmount: null, interestRate: null, tenureMonths: null, sanctionDate: null }
   ];
 
   constructor(private loanService: LoanService, private router: Router) {}
 
-  // ➕ Add row
   addRow() {
     this.partPaymentsUI.push({ amount: null, month: null });
   }
 
-  // ❌ Remove row
   removeRow(index: number) {
     this.partPaymentsUI.splice(index, 1);
   }
 
-  // 🔄 Convert UI → Backend format
+  preventInvalidNumberInput(event: KeyboardEvent) {
+    if (['e', 'E', '+', '-'].includes(event.key)) {
+      event.preventDefault();
+    }
+  }
+
+  sanitizeNumericField(event: Event) {
+    const input = event.target as HTMLInputElement | null;
+    if (!input) {
+      return;
+    }
+
+    const cleanedValue = input.value.replace(/[eE+-]/g, '');
+    if (cleanedValue !== input.value) {
+      input.value = cleanedValue;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  }
+
   buildRequest(): LoanRequest {
     const basicPart = {
       loanAmount: this.request.loanAmount ?? 0,
@@ -78,7 +94,6 @@ export class LoanForm {
       };
     }
 
-    // For expense/income strategy mode, send only required advanced data
     const expenseRequestPayload = {
       monthlyIncome: this.expenseRequest.monthlyIncome,
       expenses: this.expenseItems
@@ -90,7 +105,8 @@ export class LoanForm {
           loanName: l.loanName,
           loanAmount: Number(l.loanAmount),
           interestRate: Number(l.interestRate),
-          tenureMonths: Number(l.tenureMonths)
+          tenureMonths: Number(l.tenureMonths),
+          sanctionDate: this.formatSanctionDateForApi(l.sanctionDate)
         })),
       riskProfile: this.normalizeRiskProfileForApi(this.expenseRequest.riskProfile),
       goal: this.expenseRequest.goal,
@@ -99,12 +115,10 @@ export class LoanForm {
       emergencyFundMonths: this.expenseRequest.emergencyFundMonths ?? 12
     };
 
-    const payload: LoanRequest = {
+    return {
       useIncomeStrategy: true,
       expenseRequest: expenseRequestPayload
     };
-
-    return payload;
   }
 
   calculate() {
@@ -128,7 +142,7 @@ export class LoanForm {
           state: { strategies: res, request: payload }
         });
       },
-      error: (error) => {
+      error: error => {
         console.error('Loan strategies fetch error:', error, 'PAYLOAD:', payload);
         const serverMessage = error?.error?.message || error?.error?.error || error?.message;
         alert(serverMessage ? `Error fetching loan strategies: ${serverMessage}` : 'Error fetching loan strategies. Check console network tab/response.');
@@ -194,5 +208,22 @@ export class LoanForm {
     );
 
     return basicFieldsValid && expensesValid && loansValid;
+  }
+
+  private formatSanctionDateForApi(value: string | null) {
+    if (!value) {
+      return null;
+    }
+
+    if (/^\d{2}-\d{2}-\d{4}$/.test(value)) {
+      return value;
+    }
+
+    const [year, month, day] = value.split('-');
+    if (!year || !month || !day) {
+      return value;
+    }
+
+    return `${day}-${month}-${year}`;
   }
 }

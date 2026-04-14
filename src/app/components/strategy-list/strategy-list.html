@@ -1,11 +1,11 @@
 <div class="top-bar">
   <button class="home-btn" (click)="goBack()">
-    <span class="home-btn-icon">⌂</span>
+    <span class="home-btn-icon">H</span>
     <span class="home-btn-copy">
       <strong>Go Home</strong>
       <small>Return to loan calculator</small>
     </span>
-    <span class="home-btn-arrow">←</span>
+    <span class="home-btn-arrow">&lt;-</span>
   </button>
 
   <div style="margin-left: 20px; font-weight: 600; color: #333;">
@@ -13,8 +13,11 @@
   </div>
 
   <div class="actions">
-    <button class="download-btn" (click)="downloadReport()">
-      Download Report
+    <button class="download-btn text" (click)="downloadReport('text')">
+      Download TXT
+    </button>
+    <button class="download-btn pdf" (click)="downloadReport('pdf')">
+      Download PDF
     </button>
   </div>
 </div>

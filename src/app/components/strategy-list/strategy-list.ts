@@ -67,21 +67,20 @@ export class StrategyList implements OnInit {
     this.router.navigate(['/']);
   }
 
-  downloadReport() {
-    if (this.request?.useIncomeStrategy && this.request?.expenseRequest) {
-      const report = this.buildExpenseStrategyReport();
-      const blob = new Blob([report], { type: 'text/plain;charset=utf-8' });
-      this.triggerDownload(blob, 'expense_based_loan_report.txt');
-      return;
-    }
-
+  downloadReport(format: 'text' | 'pdf') {
     const payload = this.buildActionPayload();
+    const isIncomeStrategy = !!this.request?.useIncomeStrategy && !!this.request?.expenseRequest;
+    const serviceCall = this.getDownloadRequest(payload, format, isIncomeStrategy);
+    const fileName = this.getDownloadFileName(format, isIncomeStrategy);
 
-    this.loanService.downloadReport(payload).subscribe(blob => {
-      this.triggerDownload(blob, 'loan_report.txt');
-    }, error => {
-      console.error('Download error:', error);
-      alert('Download failed. See console for details.');
+    serviceCall.subscribe({
+      next: blob => {
+        this.triggerDownload(blob, fileName);
+      },
+      error: error => {
+        console.error('Download error:', error, 'PAYLOAD:', payload);
+        alert('Download failed. See console for details.');
+      }
     });
   }
 
@@ -159,11 +158,11 @@ export class StrategyList implements OnInit {
   }
 
   getPriorityTitle(priority: string) {
-    return priority.replace(/^\d+\.\s*/, '').split('→')[0].trim();
+    return priority.replace(/^\d+\.\s*/, '').split(/->|→/)[0].trim();
   }
 
   getPriorityNote(priority: string) {
-    const parts = priority.split('→');
+    const parts = priority.split(/->|→/);
     return parts[1]?.trim() || 'Priority loan';
   }
 
@@ -229,6 +228,26 @@ export class StrategyList implements OnInit {
     return { partPayments, partPaymentMonths };
   }
 
+  private getDownloadRequest(payload: LoanRequest, format: 'text' | 'pdf', isIncomeStrategy: boolean) {
+    if (isIncomeStrategy) {
+      return format === 'pdf'
+        ? this.loanService.downloadStrategyReportPdf(payload)
+        : this.loanService.downloadStrategyReport(payload);
+    }
+
+    return format === 'pdf'
+      ? this.loanService.downloadReportPdf(payload)
+      : this.loanService.downloadReport(payload);
+  }
+
+  private getDownloadFileName(format: 'text' | 'pdf', isIncomeStrategy: boolean) {
+    if (isIncomeStrategy) {
+      return format === 'pdf' ? 'loan_strategy_report.pdf' : 'loan_strategy_report.txt';
+    }
+
+    return format === 'pdf' ? 'loan_report.pdf' : 'loan_report.txt';
+  }
+
   private buildExpenseStrategyReport() {
     const expenseRequest = this.request?.expenseRequest;
     const expenses = expenseRequest?.expenses || [];
@@ -264,6 +283,7 @@ export class StrategyList implements OnInit {
         lines.push(`   Loan Amount: ${this.formatCurrency(loan.loanAmount)}`);
         lines.push(`   Interest Rate: ${loan.interestRate ?? '-'}%`);
         lines.push(`   Tenure (Months): ${loan.tenureMonths ?? '-'}`);
+        lines.push(`   Sanction Date: ${loan.sanctionDate ?? '-'}`);
       });
     } else {
       lines.push('No loans provided.');
