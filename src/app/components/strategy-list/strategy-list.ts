@@ -5,6 +5,7 @@ import { ChartOptions } from 'chart.js';
 import { NgChartsModule } from 'ng2-charts';
 import { LoanService } from '../../services/loan.service';
 import { LoanRequest } from '../../models/loan-request';
+import { mapToUserFacingError } from '../../utils/app-error';
 
 @Component({
   selector: 'app-strategy-list',
@@ -79,7 +80,8 @@ export class StrategyList implements OnInit {
       },
       error: error => {
         console.error('Download error:', error, 'PAYLOAD:', payload);
-        alert('Download failed. See console for details.');
+        const userError = mapToUserFacingError(error, 'report-download');
+        alert(userError.message);
       }
     });
   }
@@ -101,7 +103,8 @@ export class StrategyList implements OnInit {
         });
       }, error => {
         console.error('Amortization fetch error:', error);
-        alert('Amortization fetch failed. See console for details.');
+        const userError = mapToUserFacingError(error, 'amortization');
+        alert(userError.message);
       });
   }
 

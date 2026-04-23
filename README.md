@@ -1,59 +1,192 @@
-# LoanFrontend
+# Loan Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.3.
+Angular 21 frontend for a loan planning application with two separate calculation flows:
 
-## Development server
+- `Normal Loan`: runs fully on the frontend and updates live on the same page.
+- `Expense-Based Strategy`: keeps the existing backend-driven flow and navigates to the results screen after calculation.
 
-To start a local development server, run:
+## What The App Does
+
+The application helps users compare loan repayment strategies using:
+
+- loan amount
+- interest rate
+- tenure in months
+- extra EMI per month
+- part payments
+- monthly income
+- recurring expenses
+- multiple existing loans
+- emergency fund details
+- goal and risk profile
+
+The UI supports two planning modes so users can either do a quick single-loan simulation or a broader expense-based repayment strategy.
+
+## Current Behavior
+
+### Normal Loan
+
+This mode is now a single-page experience.
+
+- No backend call is made for the normal loan calculation.
+- Results update live as the user changes inputs.
+- The page shows:
+  - recommended strategy
+  - strategy comparison cards
+  - principal vs interest pie charts
+  - EMI
+  - interest saved
+  - tenure reduction
+  - total interest for each strategy
+
+The frontend calculator currently compares:
+
+- `Normal EMI`
+- `Extra EMI Strategy`
+- `Part Payment Strategy`
+- `Combined Prepayment Strategy`
+
+The calculation logic lives in [src/app/utils/normal-loan-calculator.ts](src/app/utils/normal-loan-calculator.ts).
+
+### Expense-Based Strategy
+
+This mode is intentionally unchanged in functional behavior.
+
+- It still validates the expense-based form fields.
+- It still builds the same `expenseRequest` payload.
+- It still calls the backend through `LoanService.getExpenseStrategy(...)`.
+- It still navigates to the results page after calculation.
+
+Relevant files:
+
+- [src/app/components/loan-form/loan-form.ts](src/app/components/loan-form/loan-form.ts)
+- [src/app/services/loan.service.ts](src/app/services/loan.service.ts)
+- [src/app/components/strategy-list/strategy-list.ts](src/app/components/strategy-list/strategy-list.ts)
+
+## Main Screens
+
+### 1. Loan Form
+
+File:
+
+- [src/app/components/loan-form/loan-form.html](src/app/components/loan-form/loan-form.html)
+- [src/app/components/loan-form/loan-form.ts](src/app/components/loan-form/loan-form.ts)
+- [src/app/components/loan-form/loan-form.css](src/app/components/loan-form/loan-form.css)
+
+Responsibilities:
+
+- mode selection
+- form rendering
+- numeric input sanitizing
+- frontend validation
+- live normal-loan calculation
+- expense-based backend request preparation
+
+### 2. Strategy Results
+
+Files:
+
+- [src/app/components/strategy-list/strategy-list.html](src/app/components/strategy-list/strategy-list.html)
+- [src/app/components/strategy-list/strategy-list.ts](src/app/components/strategy-list/strategy-list.ts)
+
+Responsibilities:
+
+- displays backend expense-based results
+- renders recommended strategy details
+- renders charts
+- supports report download
+- supports amortization navigation
+
+### 3. Amortization View
+
+Files:
+
+- [src/app/components/amortization-table/amortization-table.html](src/app/components/amortization-table/amortization-table.html)
+- [src/app/components/amortization-table/amortization-table.ts](src/app/components/amortization-table/amortization-table.ts)
+
+Responsibilities:
+
+- displays amortization rows for returned strategy data
+
+## Project Structure
+
+Key files:
+
+- [src/app/app.html](src/app/app.html): application shell/header
+- [src/app/app.css](src/app/app.css): app-level styling
+- [src/app/app.routes.ts](src/app/app.routes.ts): route configuration
+- [src/app/services/loan.service.ts](src/app/services/loan.service.ts): backend API calls
+- [src/app/utils/normal-loan-calculator.ts](src/app/utils/normal-loan-calculator.ts): frontend normal-loan calculator
+- [src/app/utils/app-error.ts](src/app/utils/app-error.ts): user-friendly error mapping
+- [src/app/models/loan-request.ts](src/app/models/loan-request.ts): request contracts
+- [src/app/models/loan-response.ts](src/app/models/loan-response.ts): response contracts
+
+## Validation And Error Handling
+
+The application now includes clearer frontend validation and user-facing error messages.
+
+- numeric inputs are sanitized
+- normal loan required fields are validated before calculation
+- incomplete part-payment rows are flagged
+- expense-based required fields are validated before backend submission
+- backend and network errors are mapped to more understandable messages
+
+Error mapping lives in:
+
+- [src/app/utils/app-error.ts](src/app/utils/app-error.ts)
+
+## Running The Project
+
+Install dependencies:
 
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Start the development server:
 
 ```bash
-ng generate component component-name
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Build the project:
 
 ```bash
-ng generate --help
+npm run build
 ```
 
-## Building
-
-To build the project run:
+Run unit tests:
 
 ```bash
-ng build
+npm test
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Backend Notes
 
-## Running unit tests
+The frontend still expects the backend for:
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+- expense-based strategy calculation
+- amortization endpoint
+- text report download
+- PDF report download
 
-```bash
-ng test
-```
+The normal-loan mode no longer depends on the backend for strategy calculation itself.
 
-## Running end-to-end tests
+## Build Notes
 
-For end-to-end (e2e) testing, run:
+The project currently builds successfully, but there are still warning-level budget notices for:
 
-```bash
-ng e2e
-```
+- initial bundle size
+- `strategy-list.css`
+- `loan-form.css`
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+These warnings do not block the build at the moment.
 
-## Additional Resources
+## Summary
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+At this point:
+
+- `Normal Loan` is frontend-only and live on the same page
+- `Expense-Based Strategy` remains backend-driven
+- the expense-based flow was not changed in functional behavior
+- the UI includes sliders, validation improvements, clearer error messages, and richer live visual feedback for normal-loan strategies

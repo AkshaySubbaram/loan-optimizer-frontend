@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
+import { UserFacingError } from '../../utils/app-error';
 
 @Component({
   selector: 'app-amortization',
@@ -23,7 +24,11 @@ export class AmortizationTable implements OnInit {
     this.data = history.state?.data || [];
 
     if (!this.data.length) {
-      alert("No amortization data found");
+      const error = new UserFacingError(
+        'We could not find amortization details for this request. Please calculate the strategy again and then reopen the amortization view.',
+        'Amortization data unavailable'
+      );
+      alert(error.message);
     }
   }
 
