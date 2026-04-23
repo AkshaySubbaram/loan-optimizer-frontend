@@ -1,12 +1,25 @@
 <div class="app-container">
+  <div class="app-header-shell">
+    <div class="app-header">
+      <div class="brand-block">
+        <span class="brand-mark">LS</span>
+        <div class="brand-copy">
+          <strong>Loan Strategy Studio</strong>
+          <small>Plan repayment with more confidence</small>
+        </div>
+      </div>
 
-  <!-- GLOBAL HEADER -->
-  <div class="app-header">
-    <button class="home-btn" (click)="goHome()">🏠 Home</button>
+      <button class="home-btn" (click)="goHome()">
+        <span class="home-btn-icon">⌂</span>
+        <span class="home-btn-copy">
+          <strong>Home</strong>
+          <small>Return to calculator</small>
+        </span>
+      </button>
+    </div>
   </div>
 
   <div class="app-wrapper">
     <router-outlet></router-outlet>
   </div>
-
 </div>

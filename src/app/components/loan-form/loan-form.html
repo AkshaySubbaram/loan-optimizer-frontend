@@ -29,7 +29,7 @@
       <div>
         <span class="card-kicker">Repayment Setup</span>
         <h2>Build Your Loan Plan</h2>
-        <p>Fill in the details below and calculate the best strategy for your situation.</p>
+        <p>Pick a planning path first, then complete only the inputs that matter for that decision.</p>
       </div>
     </div>
 
@@ -37,29 +37,36 @@
       <button
         type="button"
         class="mode-option"
-        [class.active]="!useIncomeStrategy"
-        (click)="useIncomeStrategy = false">
+        [class.active]="useIncomeStrategy === false"
+        [class.initial-highlight]="!hasSelectedMode"
+        (click)="selectMode(false)">
         <span class="mode-icon">N</span>
         <span class="mode-content">
           <strong>Normal Loan</strong>
-          <small>Direct EMI and part-payment calculation</small>
+          <small>Best when you want a fast answer for one loan, extra EMI, and part payments.</small>
         </span>
       </button>
 
       <button
         type="button"
         class="mode-option income"
-        [class.active]="useIncomeStrategy"
-        (click)="useIncomeStrategy = true">
+        [class.active]="useIncomeStrategy === true"
+        [class.initial-highlight]="!hasSelectedMode"
+        (click)="selectMode(true)">
         <span class="mode-icon">I</span>
         <span class="mode-content">
           <strong>Expense-Based Strategy</strong>
-          <small>Uses income, expenses, loans, and emergency fund</small>
+          <small>Best when you want advice based on salary, expenses, emergency fund, and multiple loans.</small>
         </span>
       </button>
     </div>
 
-    <div class="mode-banner" [class.income-mode]="useIncomeStrategy">
+    <div *ngIf="!hasSelectedMode" class="mode-banner">
+      <strong>Choose how you want to plan.</strong>
+      <span>Start simple with a single-loan calculator, or use the expense-based planner for a fuller cash-flow view.</span>
+    </div>
+
+    <div *ngIf="hasSelectedMode" class="mode-banner" [class.income-mode]="useIncomeStrategy">
       <strong>{{ useIncomeStrategy ? 'Income-based mode is active' : 'Normal loan mode is active' }}</strong>
       <span>
         {{ useIncomeStrategy
@@ -68,8 +75,8 @@
       </span>
     </div>
 
-    <div class="form-grid">
-      <div *ngIf="!useIncomeStrategy" class="section-shell">
+    <div *ngIf="hasSelectedMode" class="form-grid">
+      <div *ngIf="useIncomeStrategy === false" class="section-shell normal-shell">
         <div class="section-header">
           <h3>Loan Inputs</h3>
           <p>Start with the core loan details and optional prepayments.</p>
@@ -78,24 +85,84 @@
         <div class="field-grid">
           <div class="form-group">
             <label>Loan Amount (Rs)</label>
-            <input type="number" [(ngModel)]="request.loanAmount" placeholder="Enter loan amount" (keydown)="preventInvalidNumberInput($event)" (input)="sanitizeNumericField($event)">
+            <input
+              type="number"
+              [(ngModel)]="request.loanAmount"
+              (ngModelChange)="onNormalInputChange()"
+              placeholder="Enter loan amount"
+              inputmode="decimal"
+              min="0"
+              max="9999999999"
+              step="0.001"
+              (keydown)="preventInvalidNumberInput($event)"
+              (input)="sanitizeNumericField($event)"
+              [class.input-error]="isNormalFieldInvalid(request.loanAmount)">
+            <div class="loan-amount-slider">
+              <div class="slider-meta">
+                <span>Adjust amount quickly</span>
+                <strong>{{ request.loanAmount ?? 0 }}</strong>
+              </div>
+              <input
+                type="range"
+                [min]="loanAmountSliderMin"
+                [max]="loanAmountSliderMax"
+                [step]="loanAmountSliderStep"
+                [value]="request.loanAmount ?? 0"
+                (input)="updateLoanAmountFromSlider($event)">
+            </div>
           </div>
 
           <div class="form-group">
             <label>Interest Rate (%)</label>
-            <input type="number" [(ngModel)]="request.interestRate" placeholder="e.g., 8.5" (keydown)="preventInvalidNumberInput($event)" (input)="sanitizeNumericField($event)">
+            <input
+              type="number"
+              [(ngModel)]="request.interestRate"
+              (ngModelChange)="onNormalInputChange()"
+              placeholder="e.g., 8.5"
+              inputmode="decimal"
+              min="0"
+              max="9999999999"
+              step="0.001"
+              (keydown)="preventInvalidNumberInput($event)"
+              (input)="sanitizeInterestField($event)"
+              [class.input-error]="isNormalFieldInvalid(request.interestRate)">
           </div>
 
           <div class="form-group">
             <label>Tenure (Months)</label>
-            <input type="number" [(ngModel)]="request.tenureMonths" placeholder="e.g., 180" (keydown)="preventInvalidNumberInput($event)" (input)="sanitizeNumericField($event)">
+            <input
+              type="number"
+              [(ngModel)]="request.tenureMonths"
+              (ngModelChange)="onNormalInputChange()"
+              placeholder="e.g., 180"
+              inputmode="numeric"
+              min="0"
+              max="9999999999"
+              step="1"
+              (keydown)="preventInvalidNumberInput($event)"
+              (input)="sanitizeIntegerField($event)"
+              [class.input-error]="isNormalFieldInvalid(request.tenureMonths)">
           </div>
 
           <div class="form-group">
-            <label>Extra EMI (Rs)</label>
-            <input type="number" [(ngModel)]="request.extraEmi" placeholder="e.g., 2500" (keydown)="preventInvalidNumberInput($event)" (input)="sanitizeNumericField($event)">
+            <label>Monthly Extra EMI (Rs)</label>
+            <input
+              type="number"
+              [(ngModel)]="request.extraEmi"
+              (ngModelChange)="onNormalInputChange()"
+              placeholder="e.g., 2500"
+              inputmode="decimal"
+              min="0"
+              max="9999999999"
+              step="0.001"
+              (keydown)="preventInvalidNumberInput($event)"
+              (input)="sanitizeNumericField($event)">
           </div>
         </div>
+
+        <p *ngIf="hasTriedSubmit && useIncomeStrategy === false && (isNormalFieldInvalid(request.loanAmount) || isNormalFieldInvalid(request.interestRate) || isNormalFieldInvalid(request.tenureMonths))" class="validation-note">
+          Fill in loan amount, interest rate, and tenure before calculating the strategy.
+        </p>
 
         <div class="form-group full-width">
           <div class="subsection-title">
@@ -110,15 +177,41 @@
             No part payments added yet. Add one if you want to simulate occasional prepayments.
           </div>
 
-          <div *ngFor="let p of partPaymentsUI; let i = index" class="part-row">
-            <input type="number" placeholder="Amount (Rs)" [(ngModel)]="p.amount" (keydown)="preventInvalidNumberInput($event)" (input)="sanitizeNumericField($event)">
-            <input type="number" placeholder="Month" [(ngModel)]="p.month" (keydown)="preventInvalidNumberInput($event)" (input)="sanitizeNumericField($event)">
+          <div *ngFor="let p of partPaymentsUI; let i = index" class="part-row" [class.row-error]="isPartPaymentInvalid(i)">
+            <input
+              type="number"
+              placeholder="Amount (Rs)"
+              [(ngModel)]="p.amount"
+              (ngModelChange)="onNormalInputChange()"
+              inputmode="decimal"
+              min="0"
+              max="9999999999"
+              step="0.001"
+              (keydown)="preventInvalidNumberInput($event)"
+              (input)="sanitizeNumericField($event)"
+              [class.input-error]="isPartPaymentInvalid(i) && (p.amount === null || p.amount === undefined)">
+            <input
+              type="number"
+              placeholder="Month"
+              [(ngModel)]="p.month"
+              (ngModelChange)="onNormalInputChange()"
+              inputmode="numeric"
+              min="0"
+              max="9999999999"
+              step="1"
+              (keydown)="preventInvalidNumberInput($event)"
+              (input)="sanitizeIntegerField($event)"
+              [class.input-error]="isPartPaymentInvalid(i) && (p.month === null || p.month === undefined)">
             <button type="button" class="remove-btn" (click)="removeRow(i)">Remove</button>
           </div>
+
+          <p *ngIf="hasTriedSubmit && hasInvalidPartPayments()" class="validation-note">
+            Each part payment row needs both an amount and a month.
+          </p>
         </div>
       </div>
 
-      <div *ngIf="useIncomeStrategy" class="section-shell">
+      <div *ngIf="useIncomeStrategy === true" class="section-shell income-shell">
         <div class="section-header">
           <h3>Income-Based Inputs</h3>
           <p>Tell us about your cash flow, emergency fund, and active loans.</p>
@@ -142,9 +235,26 @@
                   required
                   #monthlyIncome="ngModel"
                   placeholder="e.g., 2,00,000"
+                  inputmode="decimal"
+                  min="0"
+                  max="9999999999"
+                  step="0.001"
                   (keydown)="preventInvalidNumberInput($event)"
                   (input)="sanitizeNumericField($event)"
                   [class.input-error]="isExpenseFieldInvalid(expenseRequest.monthlyIncome) && monthlyIncome.touched">
+                <div class="loan-amount-slider">
+                  <div class="slider-meta">
+                    <span>Adjust income quickly</span>
+                    <strong>{{ expenseRequest.monthlyIncome ?? 0 }}</strong>
+                  </div>
+                  <input
+                    type="range"
+                    [min]="monthlyIncomeSliderMin"
+                    [max]="monthlyIncomeSliderMax"
+                    [step]="monthlyIncomeSliderStep"
+                    [value]="expenseRequest.monthlyIncome ?? 0"
+                    (input)="updateMonthlyIncomeFromSlider($event)">
+                </div>
               </div>
 
               <div class="form-group">
@@ -153,6 +263,10 @@
                   type="number"
                   [(ngModel)]="expenseRequest.emergencyFund"
                   placeholder="e.g., 50,000"
+                  inputmode="decimal"
+                  min="0"
+                  max="9999999999"
+                  step="0.001"
                   (keydown)="preventInvalidNumberInput($event)"
                   (input)="sanitizeNumericField($event)"
                   [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFund) && monthlyIncome.touched">
@@ -164,6 +278,10 @@
                   type="number"
                   [(ngModel)]="expenseRequest.emergencyFundTarget"
                   placeholder="e.g., 1,00,000"
+                  inputmode="decimal"
+                  min="0"
+                  max="9999999999"
+                  step="0.001"
                   (keydown)="preventInvalidNumberInput($event)"
                   (input)="sanitizeNumericField($event)"
                   [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFundTarget) && monthlyIncome.touched">
@@ -175,8 +293,12 @@
                   type="number"
                   [(ngModel)]="expenseRequest.emergencyFundMonths"
                   placeholder="e.g., 12"
+                  inputmode="numeric"
+                  min="0"
+                  max="9999999999"
+                  step="1"
                   (keydown)="preventInvalidNumberInput($event)"
-                  (input)="sanitizeNumericField($event)"
+                  (input)="sanitizeIntegerField($event)"
                   [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFundMonths) && monthlyIncome.touched">
               </div>
             </div>
@@ -243,6 +365,10 @@
               type="number"
               placeholder="Amount"
               [(ngModel)]="exp.amount"
+              inputmode="decimal"
+              min="0"
+              max="9999999999"
+              step="0.001"
               (keydown)="preventInvalidNumberInput($event)"
               (input)="sanitizeNumericField($event)"
               [class.input-error]="isExpenseItemInvalid(i) && (exp.amount === null || exp.amount === undefined)">
@@ -287,6 +413,10 @@
                 type="number"
                 placeholder="Loan Amount"
                 [(ngModel)]="loan.loanAmount"
+                inputmode="decimal"
+                min="0"
+                max="9999999999"
+                step="0.001"
                 (keydown)="preventInvalidNumberInput($event)"
                 (input)="sanitizeNumericField($event)"
                 [class.input-error]="isLoanItemInvalid(i) && (loan.loanAmount === null || loan.loanAmount === undefined)">
@@ -294,15 +424,23 @@
                 type="number"
                 placeholder="Interest Rate (%)"
                 [(ngModel)]="loan.interestRate"
+                inputmode="decimal"
+                min="0"
+                max="9999999999"
+                step="0.001"
                 (keydown)="preventInvalidNumberInput($event)"
-                (input)="sanitizeNumericField($event)"
+                (input)="sanitizeInterestField($event)"
                 [class.input-error]="isLoanItemInvalid(i) && (loan.interestRate === null || loan.interestRate === undefined)">
               <input
                 type="number"
                 placeholder="Tenure (Months)"
                 [(ngModel)]="loan.tenureMonths"
+                inputmode="numeric"
+                min="0"
+                max="9999999999"
+                step="1"
                 (keydown)="preventInvalidNumberInput($event)"
-                (input)="sanitizeNumericField($event)"
+                (input)="sanitizeIntegerField($event)"
                 [class.input-error]="isLoanItemInvalid(i) && (loan.tenureMonths === null || loan.tenureMonths === undefined)">
               <input
                 type="date"
@@ -314,13 +452,110 @@
       </div>
     </div>
 
-    <div class="action-bar">
+    <div *ngIf="useIncomeStrategy === true" class="action-bar">
       <div class="action-copy">
         <strong>Ready to compare strategies?</strong>
         <span>We'll calculate the best repayment options based on the mode you selected.</span>
       </div>
 
-      <button class="calculate-btn" (click)="calculate()">Calculate Strategy</button>
+      <button class="calculate-btn" (click)="calculate()">
+        Calculate Strategy
+      </button>
+    </div>
+
+    <div *ngIf="useIncomeStrategy === false" class="collection-card">
+      <div class="subsection-title">
+        <div>
+          <label>Live Strategy Preview</label>
+          <p>{{ liveNormalSummary }}</p>
+        </div>
+      </div>
+
+      <div *ngIf="liveRecommendedNormalStrategy" class="loan-entry">
+        <div class="loan-entry-header">
+          <div>
+            <strong>Recommended Right Now</strong>
+            <span>{{ liveRecommendedNormalStrategy.strategy }}</span>
+          </div>
+        </div>
+
+        <div class="loan-entry-grid">
+          <div class="empty-state">
+            <strong>EMI</strong>
+            <p>Rs {{ liveRecommendedNormalStrategy.emi | number:'1.2-2' }}</p>
+          </div>
+          <div class="empty-state">
+            <strong>Interest Saved</strong>
+            <p>Rs {{ liveRecommendedNormalStrategy.interestSaved | number:'1.2-2' }}</p>
+          </div>
+          <div class="empty-state">
+            <strong>Tenure Reduced</strong>
+            <p>{{ liveRecommendedNormalStrategy.tenureReducedMonths }} months</p>
+          </div>
+          <div class="empty-state">
+            <strong>Total Interest</strong>
+            <p>Rs {{ liveRecommendedNormalStrategy.totalInterestWithExtra | number:'1.2-2' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="liveNormalStrategies.length === 0" class="empty-state">
+        Enter the required normal loan details to see the live strategy comparison here.
+      </div>
+
+      <div *ngIf="liveNormalStrategies.length > 0" class="live-results-grid">
+        <div *ngFor="let strategy of liveNormalStrategies" class="loan-entry">
+          <div class="loan-entry-header">
+            <div>
+              <strong>{{ strategy.strategy }}</strong>
+              <span>Live comparison based on your loan amount, extra EMI, and part payments.</span>
+            </div>
+          </div>
+
+          <div class="live-strategy-layout">
+            <div class="loan-entry-grid">
+              <div class="empty-state">
+                <strong>EMI</strong>
+                <p>Rs {{ strategy.emi | number:'1.2-2' }}</p>
+              </div>
+              <div class="empty-state">
+                <strong>Interest Saved</strong>
+                <p>Rs {{ strategy.interestSaved | number:'1.2-2' }}</p>
+              </div>
+              <div class="empty-state">
+                <strong>Tenure Reduced</strong>
+                <p>{{ strategy.tenureReducedMonths }} months</p>
+              </div>
+              <div class="empty-state">
+                <strong>Total Interest</strong>
+                <p>Rs {{ strategy.totalInterestWithExtra | number:'1.2-2' }}</p>
+              </div>
+            </div>
+
+            <div class="normal-chart-section">
+              <div class="normal-chart-box">
+                <canvas
+                  baseChart
+                  [data]="getNormalPieChartData(strategy)"
+                  [type]="'pie'"
+                  [options]="normalPieChartOptions">
+                </canvas>
+              </div>
+
+              <div class="normal-chart-values">
+                <div class="empty-state">
+                  <strong>Principal</strong>
+                  <p>Rs {{ request.loanAmount | number:'1.2-2' }}</p>
+                </div>
+                <div class="empty-state">
+                  <strong>Interest</strong>
+                  <p>Rs {{ strategy.totalInterestWithExtra | number:'1.2-2' }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
