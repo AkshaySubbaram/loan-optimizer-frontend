@@ -15,7 +15,14 @@ export class App {
   constructor(private router: Router) {}
 
   goHome() {
-  this.router.navigate(['/']);
-}
+    this.router.navigate(['/']);
+  }
 
+  openFaq() {
+    alert('AyRaSh FAQ:\n\n- Use Direct Strategy for single-loan quick planning.\n- Use Expense-Based Strategy for multiple loans and cashflow-aware planning.\n- Enter your loan details and extra EMI to compare repayment impact.');
+  }
+
+  openChat() {
+    alert('Hi! I\'m AyRaSh. Tell me your loan goal and I\'ll help you choose the best repayment path.');
+  }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChartOptions } from 'chart.js';
@@ -16,9 +16,10 @@ import { calculateNormalLoanStrategies } from '../../utils/normal-loan-calculato
   templateUrl: './loan-form.html',
   styleUrls: ['./loan-form.css']
 })
-export class LoanForm {
+export class LoanForm implements OnInit {
   readonly maxWholeDigits = 10;
   readonly maxDecimalDigits = 3;
+  readonly maxTenureDigits = 3;
   readonly loanAmountSliderBaseMax = 10000000;
   readonly loanAmountSliderMin = 0;
   readonly monthlyIncomeSliderBaseMax = 1000000;
@@ -69,6 +70,104 @@ export class LoanForm {
 
   constructor(private loanService: LoanService, private router: Router) {}
 
+  ngOnInit() {
+    if (this.isPageReload()) {
+      this.clearFormState();
+    }
+    this.loadSavedFormState();
+  }
+
+  private get formStateKey() {
+    return 'ayrashLoanFormState';
+  }
+
+  private isPageReload(): boolean {
+    if (typeof performance === 'undefined') {
+      return false;
+    }
+
+    const navigationEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+    if (navigationEntries.length > 0) {
+      return navigationEntries[0].type === 'reload';
+    }
+
+    const nav = (performance as any).navigation;
+    return nav && nav.type === 1;
+  }
+
+  saveFormState() {
+    if (typeof localStorage === 'undefined') {
+      return;
+    }
+
+    const state = {
+      request: this.request,
+      expenseRequest: this.expenseRequest,
+      useIncomeStrategy: this.useIncomeStrategy,
+      partPaymentsUI: this.partPaymentsUI,
+      expenseItems: this.expenseItems,
+      loanItems: this.loanItems
+    };
+
+    try {
+      localStorage.setItem(this.formStateKey, JSON.stringify(state));
+    } catch {
+      // Ignore storage failures.
+    }
+  }
+
+  private loadSavedFormState() {
+    if (typeof localStorage === 'undefined') {
+      return;
+    }
+
+    const rawState = localStorage.getItem(this.formStateKey);
+    if (!rawState) {
+      return;
+    }
+
+    try {
+      const saved = JSON.parse(rawState);
+      if (!saved || typeof saved !== 'object') {
+        return;
+      }
+
+      if (saved.request) {
+        this.request = { ...this.request, ...saved.request };
+      }
+
+      if (saved.expenseRequest) {
+        this.expenseRequest = { ...this.expenseRequest, ...saved.expenseRequest };
+      }
+
+      if (typeof saved.useIncomeStrategy === 'boolean') {
+        this.useIncomeStrategy = saved.useIncomeStrategy;
+      }
+
+      if (Array.isArray(saved.partPaymentsUI)) {
+        this.partPaymentsUI = saved.partPaymentsUI;
+      }
+
+      if (Array.isArray(saved.expenseItems) && saved.expenseItems.length > 0) {
+        this.expenseItems = saved.expenseItems;
+      }
+
+      if (Array.isArray(saved.loanItems) && saved.loanItems.length > 0) {
+        this.loanItems = saved.loanItems;
+      }
+    } catch {
+      localStorage.removeItem(this.formStateKey);
+    }
+  }
+
+  private clearFormState() {
+    if (typeof localStorage === 'undefined') {
+      return;
+    }
+
+    localStorage.removeItem(this.formStateKey);
+  }
+
   get hasSelectedMode() {
     return this.useIncomeStrategy !== null;
   }
@@ -76,16 +175,39 @@ export class LoanForm {
   selectMode(useIncomeStrategy: boolean) {
     this.useIncomeStrategy = useIncomeStrategy;
     this.refreshNormalPreviewIfNeeded();
+    this.saveFormState();
   }
 
   addRow() {
     this.partPaymentsUI.push({ amount: null, month: null });
     this.refreshNormalPreviewIfNeeded();
+    this.saveFormState();
   }
 
   removeRow(index: number) {
     this.partPaymentsUI.splice(index, 1);
     this.refreshNormalPreviewIfNeeded();
+    this.saveFormState();
+  }
+
+  addExpenseItem() {
+    this.expenseItems.push({ name: '', amount: null });
+    this.saveFormState();
+  }
+
+  removeExpenseItem(index: number) {
+    this.expenseItems.splice(index, 1);
+    this.saveFormState();
+  }
+
+  addLoanItem() {
+    this.loanItems.push({ loanName: '', loanAmount: null, interestRate: null, tenureMonths: null, sanctionDate: null });
+    this.saveFormState();
+  }
+
+  removeLoanItem(index: number) {
+    this.loanItems.splice(index, 1);
+    this.saveFormState();
   }
 
   preventInvalidNumberInput(event: KeyboardEvent) {
@@ -96,14 +218,22 @@ export class LoanForm {
 
   sanitizeNumericField(event: Event) {
     this.applyNumericConstraint(event, { integerOnly: false, maxWholeDigits: this.maxWholeDigits, maxDecimalDigits: this.maxDecimalDigits });
+    this.saveFormState();
   }
 
   sanitizeIntegerField(event: Event) {
     this.applyNumericConstraint(event, { integerOnly: true, maxWholeDigits: this.maxWholeDigits });
+    this.saveFormState();
+  }
+
+  sanitizeTenureField(event: Event) {
+    this.applyNumericConstraint(event, { integerOnly: true, maxWholeDigits: this.maxTenureDigits });
+    this.saveFormState();
   }
 
   sanitizeInterestField(event: Event) {
     this.applyNumericConstraint(event, { integerOnly: false, maxWholeDigits: this.maxWholeDigits, maxDecimalDigits: this.maxDecimalDigits });
+    this.saveFormState();
   }
 
   updateLoanAmountFromSlider(event: Event) {
@@ -115,6 +245,7 @@ export class LoanForm {
     const nextValue = Number(input.value);
     this.request.loanAmount = Number.isFinite(nextValue) ? nextValue : 0;
     this.onNormalInputChange();
+    this.saveFormState();
   }
 
   updateMonthlyIncomeFromSlider(event: Event) {
@@ -125,6 +256,7 @@ export class LoanForm {
 
     const nextValue = Number(input.value);
     this.expenseRequest.monthlyIncome = Number.isFinite(nextValue) ? nextValue : 0;
+    this.saveFormState();
   }
 
   get loanAmountSliderMax() {
@@ -249,6 +381,7 @@ export class LoanForm {
     serviceCall.subscribe({
       next: res => {
         console.log('API RESPONSE:', res, 'PAYLOAD:', payload);
+        this.clearFormState();
 
         this.router.navigate(['/results'], {
           state: { strategies: res, request: payload }
@@ -304,6 +437,7 @@ export class LoanForm {
 
   onNormalInputChange() {
     this.refreshNormalPreviewIfNeeded();
+    this.saveFormState();
   }
 
   getNormalPieChartData(strategy: any) {
