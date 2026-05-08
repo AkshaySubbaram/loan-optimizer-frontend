@@ -1,21 +1,22 @@
 <div class="app-container">
   <div class="app-header-shell">
     <div class="app-header">
-      <div class="brand-block">
-        <span class="brand-mark">LS</span>
+      <div class="brand-block" role="button" tabindex="0" (click)="goHome()" (keyup.enter)="goHome()">
+        <img src="/ayrash-logo.png" alt="AyRaSh Logo" class="brand-mark">
         <div class="brand-copy">
-          <strong>Loan Strategy Studio</strong>
-          <small>Plan repayment with more confidence</small>
+          <strong>AyRaSh</strong>
         </div>
       </div>
-
-      <button class="home-btn" (click)="goHome()">
-        <span class="home-btn-icon">⌂</span>
-        <span class="home-btn-copy">
-          <strong>Home</strong>
-          <small>Return to calculator</small>
-        </span>
-      </button>
+      <div class="header-actions">
+        <button type="button" class="header-action" (click)="openFaq()" aria-label="Open AyRaSh FAQ">
+          <span class="header-icon">❓</span>
+          <span>FAQ</span>
+        </button>
+        <button type="button" class="header-action chat" (click)="openChat()" aria-label="Open AyRaSh chat support">
+          <span class="header-icon">💬</span>
+          <span>Ask AyRaSh</span>
+        </button>
+      </div>
     </div>
   </div>
 

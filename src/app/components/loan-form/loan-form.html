@@ -1,8 +1,7 @@
 <section class="loan-page">
   <div class="hero-panel">
     <div class="hero-copy">
-      <span class="eyebrow">Loan Strategy Studio</span>
-      <h1>Plan smarter loan repayment.</h1>
+      <h1>Plan smarter loan repayment</h1>
       <p>
         Choose the calculation mode, enter your details, and quickly compare the best way to reduce
         EMI pressure, interest, or tenure.
@@ -27,7 +26,6 @@
   <div class="loan-card">
     <div class="card-header">
       <div>
-        <span class="card-kicker">Repayment Setup</span>
         <h2>Build Your Loan Plan</h2>
         <p>Pick a planning path first, then complete only the inputs that matter for that decision.</p>
       </div>
@@ -40,9 +38,9 @@
         [class.active]="useIncomeStrategy === false"
         [class.initial-highlight]="!hasSelectedMode"
         (click)="selectMode(false)">
-        <span class="mode-icon">N</span>
+        <span class="mode-icon">D</span>
         <span class="mode-content">
-          <strong>Normal Loan</strong>
+          <strong>Direct Strategy</strong>
           <small>Best when you want a fast answer for one loan, extra EMI, and part payments.</small>
         </span>
       </button>
@@ -53,7 +51,7 @@
         [class.active]="useIncomeStrategy === true"
         [class.initial-highlight]="!hasSelectedMode"
         (click)="selectMode(true)">
-        <span class="mode-icon">I</span>
+        <span class="mode-icon">E</span>
         <span class="mode-content">
           <strong>Expense-Based Strategy</strong>
           <small>Best when you want advice based on salary, expenses, emergency fund, and multiple loans.</small>
@@ -137,10 +135,10 @@
               placeholder="e.g., 180"
               inputmode="numeric"
               min="0"
-              max="9999999999"
+              max="999"
               step="1"
               (keydown)="preventInvalidNumberInput($event)"
-              (input)="sanitizeIntegerField($event)"
+              (input)="sanitizeTenureField($event)"
               [class.input-error]="isNormalFieldInvalid(request.tenureMonths)">
           </div>
 
@@ -317,6 +315,7 @@
                 <label>Risk Profile</label>
                 <select
                   [(ngModel)]="expenseRequest.riskProfile"
+                  (ngModelChange)="saveFormState()"
                   [class.input-error]="isExpenseFieldInvalid(expenseRequest.riskProfile)">
                   <option value="low">Low</option>
                   <option value="medium">Medium</option>
@@ -328,6 +327,7 @@
                 <label>Goal</label>
                 <select
                   [(ngModel)]="expenseRequest.goal"
+                  (ngModelChange)="saveFormState()"
                   [class.input-error]="isExpenseFieldInvalid(expenseRequest.goal)">
                   <option value="LOW_EMI">Lower EMI</option>
                   <option value="MIN_INTEREST">Minimize Interest</option>
@@ -348,7 +348,7 @@
               <label>Expenses</label>
               <p>Add monthly recurring expenses that affect disposable income.</p>
             </div>
-            <button type="button" class="add-btn" (click)="expenseItems.push({ name: '', amount: null })">+ Add Expense</button>
+            <button type="button" class="add-btn" (click)="addExpenseItem()">+ Add Expense</button>
           </div>
 
           <div *ngIf="expenseItems.length === 0" class="empty-state">
@@ -360,6 +360,7 @@
               type="text"
               placeholder="Expense Name"
               [(ngModel)]="exp.name"
+              (ngModelChange)="saveFormState()"
               [class.input-error]="isExpenseItemInvalid(i) && !exp.name">
             <input
               type="number"
@@ -372,7 +373,7 @@
               (keydown)="preventInvalidNumberInput($event)"
               (input)="sanitizeNumericField($event)"
               [class.input-error]="isExpenseItemInvalid(i) && (exp.amount === null || exp.amount === undefined)">
-            <button type="button" class="remove-btn" (click)="expenseItems.splice(i, 1)">Remove</button>
+            <button type="button" class="remove-btn" (click)="removeExpenseItem(i)">Remove</button>
           </div>
         </div>
 
@@ -385,7 +386,7 @@
             <button
               type="button"
               class="add-btn"
-              (click)="loanItems.push({ loanName: '', loanAmount: null, interestRate: null, tenureMonths: null, sanctionDate: null })">
+              (click)="addLoanItem()">
               + Add Loan
             </button>
           </div>
@@ -400,7 +401,7 @@
                 <strong>Loan {{ i + 1 }}</strong>
                 <span>Enter the loan details exactly as sanctioned.</span>
               </div>
-              <button type="button" class="remove-btn" (click)="loanItems.splice(i, 1)">Remove</button>
+              <button type="button" class="remove-btn" (click)="removeLoanItem(i)">Remove</button>
             </div>
 
             <div class="loan-entry-grid">
@@ -408,6 +409,7 @@
                 type="text"
                 placeholder="Loan Name"
                 [(ngModel)]="loan.loanName"
+                (ngModelChange)="saveFormState()"
                 [class.input-error]="isLoanItemInvalid(i) && !loan.loanName">
               <input
                 type="number"
@@ -437,14 +439,15 @@
                 [(ngModel)]="loan.tenureMonths"
                 inputmode="numeric"
                 min="0"
-                max="9999999999"
+                max="999"
                 step="1"
                 (keydown)="preventInvalidNumberInput($event)"
-                (input)="sanitizeIntegerField($event)"
+                (input)="sanitizeTenureField($event)"
                 [class.input-error]="isLoanItemInvalid(i) && (loan.tenureMonths === null || loan.tenureMonths === undefined)">
               <input
                 type="date"
                 [(ngModel)]="loan.sanctionDate"
+                (ngModelChange)="saveFormState()"
                 >
             </div>
           </div>
