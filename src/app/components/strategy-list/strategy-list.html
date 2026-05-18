@@ -1,23 +1,50 @@
 <div class="top-bar">
-  <button class="home-btn" (click)="goBack()">
-    <span class="home-btn-icon">H</span>
-    <span class="home-btn-copy">
-      <strong>Go Home</strong>
-      <small>Return to loan calculator</small>
+  <button class="home-btn" type="button" (click)="goBack()">
+    <span class="action-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M10 6 4 12l6 6" />
+        <path d="M5 12h10a5 5 0 0 1 0 10h-1" />
+      </svg>
     </span>
-    <span class="home-btn-arrow">&lt;-</span>
+    <span class="home-btn-copy">
+      <strong>Edit Inputs</strong>
+      <small>Change inputs and recalculate</small>
+    </span>
   </button>
 
-  <div style="margin-left: 20px; font-weight: 600; color: #333;">
-    Strategy mode: {{ request?.useIncomeStrategy ? 'Expense/Income-Driven' : 'Normal Loan' }}
+  <div class="strategy-mode-badge">
+    <span>Strategy mode</span>
+    <strong>{{ request?.useIncomeStrategy ? 'Expense/Income-Driven' : 'Normal Loan' }}</strong>
   </div>
 
   <div class="actions">
-    <button class="download-btn text" (click)="downloadReport('text')">
-      Download TXT
+    <button class="download-btn text" type="button" (click)="downloadReport('text')">
+      <span class="action-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z" />
+          <path d="M14 2v5h5" />
+          <path d="M9 13h6" />
+          <path d="M9 17h4" />
+        </svg>
+      </span>
+      <span>
+        <strong>TXT</strong>
+        <small>Text report</small>
+      </span>
     </button>
-    <button class="download-btn pdf" (click)="downloadReport('pdf')">
-      Download PDF
+    <button class="download-btn pdf" type="button" (click)="downloadReport('pdf')">
+      <span class="action-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z" />
+          <path d="M14 2v5h5" />
+          <path d="M12 11v6" />
+          <path d="m9 14 3 3 3-3" />
+        </svg>
+      </span>
+      <span>
+        <strong>PDF</strong>
+        <small>Download file</small>
+      </span>
     </button>
   </div>
 </div>

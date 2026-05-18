@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser, Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { ChartOptions } from 'chart.js';
 import { NgChartsModule } from 'ng2-charts';
@@ -38,6 +38,7 @@ export class StrategyList implements OnInit {
   constructor(
     private router: Router,
     private loanService: LoanService,
+    private location: Location,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -65,7 +66,17 @@ export class StrategyList implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/']);
+    if (this.request?.useIncomeStrategy && this.request?.expenseRequest) {
+      this.restoreExpenseFormState();
+      this.router.navigate(['/']);
+      return;
+    }
+
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      this.location.back();
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 
   downloadReport(format: 'text' | 'pdf') {
@@ -356,6 +367,64 @@ export class StrategyList implements OnInit {
     a.download = fileName;
     a.click();
     window.URL.revokeObjectURL(url);
+  }
+
+  private restoreExpenseFormState() {
+    if (typeof localStorage === 'undefined') {
+      return;
+    }
+
+    const expenseRequest = this.request.expenseRequest;
+    const loans = expenseRequest.loans || [];
+    const expenses = expenseRequest.expenses || [];
+    const state = {
+      request: {
+        loanAmount: null,
+        interestRate: null,
+        tenureMonths: null,
+        extraEmi: 0,
+        partPayments: [],
+        partPaymentMonths: [],
+        useIncomeStrategy: false
+      },
+      expenseRequest: {
+        ...expenseRequest,
+        riskProfile: String(expenseRequest.riskProfile || 'medium').toLowerCase(),
+        expenses,
+        loans: loans.map((loan: any) => ({
+          ...loan,
+          sanctionDate: this.formatSanctionDateForInput(loan.sanctionDate)
+        }))
+      },
+      useIncomeStrategy: true,
+      partPaymentsUI: [],
+      expenseItems: expenses.length ? expenses : [{ name: '', amount: null }],
+      loanItems: loans.length
+        ? loans.map((loan: any) => ({
+            ...loan,
+            sanctionDate: this.formatSanctionDateForInput(loan.sanctionDate)
+          }))
+        : [{ loanName: '', loanAmount: null, interestRate: null, tenureMonths: null, sanctionDate: null }]
+    };
+
+    try {
+      localStorage.setItem('ayrashLoanFormState', JSON.stringify(state));
+    } catch {
+      // Ignore storage failures.
+    }
+  }
+
+  private formatSanctionDateForInput(value: string | null | undefined) {
+    if (!value || /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      return value || null;
+    }
+
+    const [day, month, year] = value.split('-');
+    if (!day || !month || !year) {
+      return value;
+    }
+
+    return `${year}-${month}-${day}`;
   }
 
   private buildAdviceViewModel() {
