@@ -71,7 +71,7 @@ export class LoanForm implements OnInit {
   constructor(private loanService: LoanService, private router: Router) {}
 
   ngOnInit() {
-    if (this.isPageReload()) {
+    if (this.isPageReload() && !this.hasSavedFormState()) {
       this.clearFormState();
     }
     this.loadSavedFormState();
@@ -95,6 +95,14 @@ export class LoanForm implements OnInit {
     return nav && nav.type === 1;
   }
 
+  private hasSavedFormState(): boolean {
+    if (typeof localStorage === 'undefined') {
+      return false;
+    }
+
+    return !!localStorage.getItem(this.formStateKey);
+  }
+
   saveFormState() {
     if (typeof localStorage === 'undefined') {
       return;
@@ -114,6 +122,37 @@ export class LoanForm implements OnInit {
     } catch {
       // Ignore storage failures.
     }
+  }
+
+  resetForm() {
+    this.hasTriedSubmit = false;
+    this.useIncomeStrategy = null;
+    this.request = {
+      loanAmount: null,
+      interestRate: null,
+      tenureMonths: null,
+      extraEmi: 0,
+      partPayments: [],
+      partPaymentMonths: [],
+      useIncomeStrategy: false
+    };
+    this.expenseRequest = {
+      monthlyIncome: null,
+      expenses: [],
+      loans: [],
+      riskProfile: 'medium',
+      goal: 'LOW_EMI',
+      emergencyFund: null,
+      emergencyFundTarget: null,
+      emergencyFundMonths: null
+    };
+    this.partPaymentsUI = [];
+    this.expenseItems = [{ name: '', amount: null }];
+    this.loanItems = [{ loanName: '', loanAmount: null, interestRate: null, tenureMonths: null, sanctionDate: null }];
+    this.liveNormalStrategies = [];
+    this.liveRecommendedNormalStrategy = null;
+    this.liveNormalSummary = '';
+    this.clearFormState();
   }
 
   private loadSavedFormState() {
@@ -223,6 +262,11 @@ export class LoanForm implements OnInit {
 
   sanitizeIntegerField(event: Event) {
     this.applyNumericConstraint(event, { integerOnly: true, maxWholeDigits: this.maxWholeDigits });
+    this.saveFormState();
+  }
+
+  sanitizeSmallIntegerField(event: Event) {
+    this.applyNumericConstraint(event, { integerOnly: true, maxWholeDigits: 3 });
     this.saveFormState();
   }
 
@@ -381,7 +425,6 @@ export class LoanForm implements OnInit {
     serviceCall.subscribe({
       next: res => {
         console.log('API RESPONSE:', res, 'PAYLOAD:', payload);
-        this.clearFormState();
 
         this.router.navigate(['/results'], {
           state: { strategies: res, request: payload }

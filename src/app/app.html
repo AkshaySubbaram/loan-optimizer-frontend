@@ -2,19 +2,37 @@
   <div class="app-header-shell">
     <div class="app-header">
       <div class="brand-block" role="button" tabindex="0" (click)="goHome()" (keyup.enter)="goHome()">
-        <img src="/ayrash-logo.png" alt="AyRaSh Logo" class="brand-mark">
+        <img src="/Logo.png" alt="AyRaSh Logo" class="brand-mark">
         <div class="brand-copy">
-          <strong>AyRaSh</strong>
+          <strong><span class="brand-red">A</span>y<span class="brand-red">R</span>a<span class="brand-red">S</span>h</strong>
         </div>
+      </div>
+      <div class="header-title-card">
+        <h1>Smarter Loan Strategies</h1>
+        <p>Compare ways to reduce EMI pressure, interest, or tenure.</p>
       </div>
       <div class="header-actions">
         <button type="button" class="header-action" (click)="openFaq()" aria-label="Open AyRaSh FAQ">
           <span class="header-icon">❓</span>
           <span>FAQ</span>
         </button>
-        <button type="button" class="header-action chat" (click)="openChat()" aria-label="Open AyRaSh chat support">
-          <span class="header-icon">💬</span>
-          <span>Ask AyRaSh</span>
+        <button type="button" class="header-action chat" (click)="openChat()" aria-label="Open Ask Alien chat support">
+          <span class="header-icon alien-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 3c4.3 0 7 3 7 7.2 0 5.1-4.4 9.8-7 9.8s-7-4.7-7-9.8C5 6 7.7 3 12 3Z" />
+              <path d="M8.6 11.2c1.6-.8 2.9-.5 3.2.2.3.7-.5 1.7-2.1 2.4-1.6.8-2.9.5-3.2-.2-.3-.7.5-1.7 2.1-2.4Z" />
+              <path d="M15.4 11.2c-1.6-.8-2.9-.5-3.2.2-.3.7.5 1.7 2.1 2.4 1.6.8 2.9.5 3.2-.2.3-.7-.5-1.7-2.1-2.4Z" />
+              <path d="M9.5 16.4c1.7.9 3.3.9 5 0" />
+            </svg>
+          </span>
+          <span>Ask Alien</span>
+        </button>
+        <button 
+          type="button" 
+          class="header-action theme-toggle" 
+          (click)="toggleTheme()" 
+          [attr.aria-label]="isDarkMode() ? 'Switch to light mode' : 'Switch to dark mode'">
+          <span class="header-icon">{{ isDarkMode() ? '🌙' : '☀️' }}</span>
         </button>
       </div>
     </div>
@@ -23,4 +41,27 @@
   <div class="app-wrapper">
     <router-outlet></router-outlet>
   </div>
+</div>
+
+<div *ngIf="showFaq()" class="faq-overlay" (click)="closeFaq()">
+  <section class="faq-panel" role="dialog" aria-modal="true" aria-labelledby="faq-title" (click)="$event.stopPropagation()">
+    <div class="faq-header">
+      <div>
+        <span>Help Center</span>
+        <h2 id="faq-title">AyRaSh FAQ</h2>
+        <p>Answers for planning, recalculating, reports, and repayment strategy choices.</p>
+      </div>
+      <button type="button" class="faq-close" (click)="closeFaq()" aria-label="Close FAQ">x</button>
+    </div>
+
+    <div class="faq-list">
+      <article *ngFor="let item of faqItems; let i = index" class="faq-item">
+        <div class="faq-number">{{ i + 1 }}</div>
+        <div>
+          <h3>{{ item.question }}</h3>
+          <p>{{ item.answer }}</p>
+        </div>
+      </article>
+    </div>
+  </section>
 </div>

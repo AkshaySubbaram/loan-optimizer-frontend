@@ -1,34 +1,13 @@
 <section class="loan-page">
-  <div class="hero-panel">
-    <div class="hero-copy">
-      <h1>Plan smarter loan repayment</h1>
-      <p>
-        Choose the calculation mode, enter your details, and quickly compare the best way to reduce
-        EMI pressure, interest, or tenure.
-      </p>
-    </div>
-
-    <div class="hero-focus">
-      <div class="focus-card primary">
-        <span>Best Use</span>
-        <strong>Pick your mode first</strong>
-        <small>Normal for one loan, expense-based for salary and multiple loans.</small>
-      </div>
-
-      <div class="focus-card">
-        <span>Outcome</span>
-        <strong>Clear repayment direction</strong>
-        <small>Useful advice, loan priority, amortization, and report download.</small>
-      </div>
-    </div>
-  </div>
-
   <div class="loan-card">
-    <div class="card-header">
+    <div class="card-header highlighted">
       <div>
-        <h2>Build Your Loan Plan</h2>
+        <h2>✨ Build Your Loan Plan</h2>
         <p>Pick a planning path first, then complete only the inputs that matter for that decision.</p>
       </div>
+      <button type="button" class="reset-btn" (click)="resetForm()">
+        Reset All
+      </button>
     </div>
 
     <div class="mode-switcher">
@@ -293,10 +272,10 @@
                   placeholder="e.g., 12"
                   inputmode="numeric"
                   min="0"
-                  max="9999999999"
+                  max="999"
                   step="1"
                   (keydown)="preventInvalidNumberInput($event)"
-                  (input)="sanitizeIntegerField($event)"
+                  (input)="sanitizeSmallIntegerField($event)"
                   [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFundMonths) && monthlyIncome.touched">
               </div>
             </div>

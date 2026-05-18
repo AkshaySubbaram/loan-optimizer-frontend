@@ -25,7 +25,7 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/ayrash-logo.png');
+  background-image: url('/Logo.png');
   background-repeat: no-repeat;
   background-position: center;
   background-size: 20%;
@@ -86,11 +86,11 @@ button:focus-visible {
 }
 
 .app-header {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto minmax(260px, 1fr) auto;
   align-items: center;
-  gap: 16px;
-  padding: 14px 16px;
+  gap: 14px;
+  padding: 12px 14px;
   border-radius: 26px;
   background: linear-gradient(135deg, rgba(242, 255, 247, 0.95), rgba(235, 245, 255, 0.95));
   border: 1px solid rgba(114, 167, 156, 0.24);
@@ -100,9 +100,12 @@ button:focus-visible {
 
 .brand-block {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  min-width: 0;
+  justify-content: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  min-width: 92px;
   padding: 8px 10px;
   border-radius: 18px;
   background: linear-gradient(135deg, rgba(255, 250, 240, 0.8), rgba(235, 247, 255, 0.78));
@@ -114,11 +117,65 @@ button:focus-visible {
   outline-offset: 3px;
 }
 
+.theme-toggle {
+  padding: 8px 12px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+}
+
+.theme-toggle:hover {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.theme-toggle .header-icon {
+  font-size: 18px;
+}
+
 .header-actions {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 10px;
   flex-wrap: wrap;
+  flex: 0 0 auto;
+}
+
+.header-title-card {
+  justify-self: center;
+  min-width: 220px;
+  width: min(100%, 470px);
+  padding: 12px 16px;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at top left, rgba(214, 245, 235, 0.65), transparent 36%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(239, 248, 255, 0.82));
+  border: 1px solid rgba(152, 205, 190, 0.22);
+}
+
+.header-title-card h1 {
+  margin: 0 0 4px;
+  color: #0b5f49;
+  font-size: clamp(1.15rem, 2vw, 1.55rem);
+  font-style: italic;
+  font-weight: 800;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.header-title-card p {
+  margin: 0;
+  color: #526b62;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
 }
 
 .header-action {
@@ -163,15 +220,25 @@ button:focus-visible {
   font-size: 14px;
 }
 
+.alien-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .brand-mark {
-  width: 48px;
-  height: 48px;
-  border-radius: 16px;
-  object-fit: contain;
+  width: 84px;
+  height: 54px;
+  border-radius: 14px;
+  object-fit: cover;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-  box-shadow: 0 6px 14px rgba(23, 57, 47, 0.16);
-  background: linear-gradient(135deg, #dff4ea, #e8f2ff);
+  box-shadow: 0 8px 18px rgba(23, 57, 47, 0.14);
+  background: #ffffff;
   border: 1px solid rgba(129, 196, 174, 0.3);
 }
 
@@ -188,12 +255,18 @@ button:focus-visible {
 }
 
 .brand-copy strong {
-  color: #1a3a2e;
-  font-size: 15px;
-  font-weight: 700;
+  color: #0f4f7b;
+  font-size: 14px;
+  font-weight: 800;
   font-style: italic;
-  letter-spacing: 0.5px;
-  text-shadow: 0 1px 2px rgba(26, 58, 46, 0.1);
+  letter-spacing: 0.4px;
+  line-height: 1;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(15, 79, 123, 0.14);
+}
+
+.brand-red {
+  color: #b85d22;
 }
 
 .brand-copy small {
@@ -246,6 +319,119 @@ button:focus-visible {
   margin: 0 auto;
 }
 
+.faq-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(10, 24, 35, 0.52);
+  backdrop-filter: blur(8px);
+}
+
+.faq-panel {
+  width: min(860px, 100%);
+  max-height: min(82vh, 760px);
+  overflow: hidden;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(213, 241, 232, 0.9), transparent 34%),
+    linear-gradient(180deg, #ffffff, #f6fbff);
+  border: 1px solid rgba(111, 160, 150, 0.28);
+  box-shadow: 0 30px 80px rgba(5, 20, 31, 0.32);
+  color: #17392f;
+}
+
+.faq-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid rgba(92, 133, 124, 0.18);
+}
+
+.faq-header span {
+  display: inline-block;
+  margin-bottom: 6px;
+  color: #b85d22;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.faq-header h2 {
+  margin: 0;
+  color: #0f4f7b;
+  font-size: 26px;
+  line-height: 1.1;
+}
+
+.faq-header p {
+  margin: 6px 0 0;
+  color: #586d66;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.faq-close {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border-radius: 13px;
+  background: #17392f;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 800;
+  box-shadow: 0 10px 22px rgba(23, 57, 47, 0.2);
+}
+
+.faq-list {
+  display: grid;
+  gap: 12px;
+  max-height: calc(min(82vh, 760px) - 128px);
+  overflow: auto;
+  padding: 18px 24px 24px;
+}
+
+.faq-item {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 12px;
+  padding: 15px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(137, 178, 168, 0.22);
+  box-shadow: 0 10px 22px rgba(17, 52, 45, 0.06);
+}
+
+.faq-number {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #0f4f7b, #2f8bb2);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.faq-item h3 {
+  margin: 0 0 6px;
+  color: #17392f;
+  font-size: 15px;
+  line-height: 1.25;
+}
+
+.faq-item p {
+  margin: 0;
+  color: #536862;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
 @media (max-width: 768px) {
   .app-container {
     padding: 14px 14px 28px;
@@ -257,9 +443,29 @@ button:focus-visible {
   }
 
   .app-header {
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     border-radius: 18px;
+  }
+
+  .brand-block {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .brand-mark {
+    width: 112px;
+    height: 72px;
+  }
+
+  .header-title-card {
+    min-width: 0;
+    text-align: center;
+  }
+
+  .header-actions {
+    justify-content: center;
   }
 
   .home-btn {
@@ -269,5 +475,27 @@ button:focus-visible {
 
   .home-btn-copy small {
     text-align: center;
+  }
+
+  .faq-overlay {
+    padding: 12px;
+  }
+
+  .faq-panel {
+    max-height: 88vh;
+    border-radius: 18px;
+  }
+
+  .faq-header {
+    padding: 18px 18px 14px;
+  }
+
+  .faq-list {
+    max-height: calc(88vh - 130px);
+    padding: 14px 18px 18px;
+  }
+
+  .faq-item {
+    grid-template-columns: 1fr;
   }
 }

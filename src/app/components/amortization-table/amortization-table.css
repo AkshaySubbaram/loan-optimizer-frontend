@@ -1,56 +1,50 @@
-.amortization-container {
-  margin-top: 30px;
-  margin-bottom: 30px;
+.amort-card {
+  margin-bottom: 24px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
 }
 
-.amortization-container h3 {
-  color: #333;
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 1.4rem;
+.amort-card h2 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  color: #2c3e50;
 }
 
-.table-container {
-  overflow-x: auto;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.amortization-table {
+.amort-card table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
 }
 
-.amortization-table thead {
-  background-color: #f8f9fa;
+.amort-card thead {
+  background-color: #f0f1f3;
 }
 
-.amortization-table th {
-  padding: 15px 12px;
+.amort-card th {
+  padding: 12px;
   text-align: left;
   font-weight: 600;
   color: #2c3e50;
   border-bottom: 2px solid #dee2e6;
-  white-space: nowrap;
 }
 
-.amortization-table td {
+.amort-card td {
   padding: 12px;
   border-bottom: 1px solid #dee2e6;
   text-align: right;
 }
 
-.amortization-table td:first-child {
+.amort-card td:first-child {
   text-align: center;
   font-weight: 600;
 }
 
-.amortization-table tbody tr:hover {
+.amort-card tbody tr:hover {
   background-color: #f8f9fa;
 }
 
-.amortization-table tbody tr:nth-child(even) {
+.amort-card tbody tr:nth-child(even) {
   background-color: #f9f9f9;
 }
