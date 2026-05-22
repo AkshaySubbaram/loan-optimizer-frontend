@@ -334,7 +334,7 @@
 
 .advice-panel h3 {
   margin: 0 0 6px;
-  font-size: 28px;
+  font-size: 20px;
   color: #183b2d;
 }
 
@@ -510,9 +510,10 @@
 }
 
 .advice-block h4 {
-  margin: 0 0 8px;
-  font-size: 14px;
+  margin: 0 0 6px;
+  font-size: 13px;
   color: #274538;
+  font-weight: 700;
 }
 
 .advice-block p {

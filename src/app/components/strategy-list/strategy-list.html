@@ -70,6 +70,11 @@
       <strong>Rs {{ advice.extraEmiRecommended | number }}</strong>
     </div>
 
+    <div *ngIf="extraEmiTargetLoan" class="metric-card">
+      <span>Extra EMI Target</span>
+      <strong>{{ extraEmiTargetLoan }}</strong>
+    </div>
+
     <div class="metric-card">
       <span>Loan Count</span>
       <strong>{{ getLoanCount() || 1 }}</strong>
@@ -82,28 +87,52 @@
 
     <div *ngIf="recommendedStrategy" class="metric-card">
       <span>Tenure Reduced</span>
-      <strong>{{ recommendedStrategy.tenureReducedMonths }} mo</strong>
-    </div>
-  </div>
-
-  <div *ngIf="loanPriority.length" class="priority-strip">
-    <div class="priority-header">
-      <h4>Loan Priority</h4>
-      <span>Pay extra toward these loans in this order</span>
-    </div>
-
-    <div class="priority-list">
-      <div *ngFor="let item of loanPriority; let i = index" class="priority-item">
-        <div class="priority-rank">{{ i + 1 }}</div>
-        <div class="priority-copy">
-          <strong>{{ getPriorityTitle(item) }}</strong>
-          <span>{{ getPriorityNote(item) }}</span>
-        </div>
-      </div>
+      <strong>{{ recommendedStrategy.tenureReducedMonths }} months</strong>
     </div>
   </div>
 
   <div class="advice-grid">
+    <div *ngIf="financialSummary || request?.expenseRequest" class="advice-block full-span">
+      <h4>Financial Summary</h4>
+      <div class="details-grid summary-grid">
+        <p><span>Monthly Income</span> ₹ {{ getMonthlyIncome() | number }}</p>
+        <p><span>Total Expenses</span> ₹ {{ getTotalExpenses() | number }}</p>
+        <p><span>Total Loan EMI</span> ₹ {{ getTotalLoanEmi() | number }}</p>
+        <p><span>Monthly Emergency Contribution</span> ₹ {{ getMonthlyEmergencyContribution() | number }}</p>
+        <p><span>Disposable Income</span> ₹ {{ getDisposableIncome() | number }}</p>
+      </div>
+    </div>
+
+    <div *ngIf="loanPriority.length" class="priority-strip">
+      <div class="priority-header">
+        <h4>Loan Priority</h4>
+        <span>Pay extra toward these loans in this order</span>
+      </div>
+
+      <div class="priority-list">
+        <div *ngFor="let item of loanPriority; let i = index" class="priority-item">
+          <div class="priority-rank">{{ i + 1 }}</div>
+          <div class="priority-copy">
+            <strong>{{ getPriorityTitle(item) }}</strong>
+            <span>{{ getPriorityNote(item) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="getLoanDetails().length" class="advice-block full-span">
+      <h4>Loan Details</h4>
+      <div class="details-grid summary-grid">
+        <div *ngFor="let loan of getLoanDetails()">
+          <p><strong>{{ loan.loanName }}</strong></p>
+          <p><span>Amount</span> ₹ {{ loan.loanAmount | number }}</p>
+          <p><span>Sanction</span> {{ loan.sanctionDate || '-' }}</p>
+          <p><span>Months Since</span> {{ getLoanMonthsSinceSanction(loan) }}</p>
+          <p><span>Remaining Tenure</span> {{ getLoanRemainingTenure(loan) || '-' }} months</p>
+        </div>
+      </div>
+    </div>
+
     <div *ngIf="adviceContext.length" class="advice-block">
       <h4>Your Situation</h4>
       <p *ngFor="let item of adviceContext">{{ item }}</p>
@@ -123,12 +152,17 @@
       <h4>Why This Was Recommended</h4>
       <p>{{ reason }}</p>
     </div>
+
   </div>
 </div>
 
 <div *ngIf="recommendedStrategy" class="recommended-panel">
   <h3>Recommended Strategy</h3>
   <p>{{ recommendedStrategy.strategy }} - EMI Rs {{ recommendedStrategy.emi | number }}</p>
+  <p *ngIf="recommendedStrategy.loanName"><span>Loan</span> {{ recommendedStrategy.loanName }}</p>
+  <p *ngIf="recommendedStrategy.suggestedMonthlyWithExtra !== undefined">
+    <span>Suggested Monthly With Extra</span> Rs {{ recommendedStrategy.suggestedMonthlyWithExtra | number }}
+  </p>
 </div>
 
 <div *ngIf="strategies.length === 0" class="no-strategies">
@@ -139,6 +173,7 @@
   <div class="strategy-content">
     <div class="strategy-details">
       <h3 class="strategy-title">{{ s.strategy }}</h3>
+      <p *ngIf="s.loanName"><span>Loan</span> {{ s.loanName }}</p>
 
       <div class="details-grid">
         <p><span>EMI</span> Rs {{ s.emi | number }}</p>
@@ -168,6 +203,11 @@
         <div class="value-box interest">
           <span>Interest</span>
           <strong>Rs {{ s.totalInterestWithExtra | number }}</strong>
+        </div>
+
+        <div *ngIf="request?.useIncomeStrategy && advice?.extraEmiRecommended" class="value-box extra-emi">
+          <span>Extra EMI</span>
+          <strong>Rs {{ advice.extraEmiRecommended | number }}</strong>
         </div>
       </div>
     </div>

@@ -18,6 +18,7 @@ import { calculateNormalLoanStrategies } from '../../utils/normal-loan-calculato
 })
 export class LoanForm implements OnInit {
   readonly maxWholeDigits = 10;
+  readonly maxInterestWholeDigits = 3;
   readonly maxDecimalDigits = 3;
   readonly maxTenureDigits = 3;
   readonly loanAmountSliderBaseMax = 10000000;
@@ -276,7 +277,7 @@ export class LoanForm implements OnInit {
   }
 
   sanitizeInterestField(event: Event) {
-    this.applyNumericConstraint(event, { integerOnly: false, maxWholeDigits: this.maxWholeDigits, maxDecimalDigits: this.maxDecimalDigits });
+    this.applyNumericConstraint(event, { integerOnly: false, maxWholeDigits: this.maxInterestWholeDigits, maxDecimalDigits: this.maxDecimalDigits });
     this.saveFormState();
   }
 
