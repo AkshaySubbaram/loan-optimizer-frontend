@@ -18,9 +18,11 @@ export class StrategyList implements OnInit {
   strategies: any[] = [];
   request: any;
   advice: any;
+  financialSummary: any;
   recommendedStrategy: any;
   reason = '';
   loanPriority: string[] = [];
+  extraEmiTargetLoan: string | null = null;
   adviceSteps: string[] = [];
   adviceContext: string[] = [];
   paymentPlan: string[] = [];
@@ -53,6 +55,7 @@ export class StrategyList implements OnInit {
     if (state?.strategies?.allStrategies) {
       this.strategies = state.strategies.allStrategies;
       this.advice = state.strategies.advice;
+      this.financialSummary = state.strategies.financialSummary;
       this.recommendedStrategy = state.strategies.recommendedStrategy;
       this.reason = state.strategies.reason || '';
       this.loanPriority = state.strategies.loanPriority || [];
@@ -62,6 +65,15 @@ export class StrategyList implements OnInit {
       this.strategies = [state.strategies];
     }
 
+    if (!this.recommendedStrategy && this.strategies.length) {
+      this.recommendedStrategy = this.strategies.reduce((best, current) => {
+        const bestSaved = Number(best.interestSaved || 0);
+        const currentSaved = Number(current.interestSaved || 0);
+        return currentSaved > bestSaved ? current : best;
+      }, this.strategies[0]);
+    }
+
+    this.extraEmiTargetLoan = this.getExtraEmiTargetLoan();
     this.buildAdviceViewModel();
   }
 
@@ -146,7 +158,111 @@ export class StrategyList implements OnInit {
   }
 
   getLoanCount() {
-    return this.request?.expenseRequest?.loans?.length || 0;
+    return this.financialSummary?.loans?.length || this.request?.expenseRequest?.loans?.length || 0;
+  }
+
+  getLoanDetails() {
+    return this.financialSummary?.loans || this.request?.expenseRequest?.loans || [];
+  }
+
+  getTotalExpenses() {
+    if (this.financialSummary?.totalExpenses !== undefined) {
+      return Number(this.financialSummary.totalExpenses || 0);
+    }
+
+    return this.request?.expenseRequest?.expenses?.reduce(
+      (sum: number, expense: any) => sum + (Number(expense.amount) || 0),
+      0
+    ) || 0;
+  }
+
+  calculateLoanEmi(principal: number, annualRate: number, tenureMonths: number) {
+    if (!principal || !annualRate || !tenureMonths) {
+      return 0;
+    }
+
+    const monthlyRate = annualRate / 12 / 100;
+    const growthFactor = Math.pow(1 + monthlyRate, tenureMonths);
+    return Number(((principal * monthlyRate * growthFactor) / (growthFactor - 1)).toFixed(0));
+  }
+
+  getTotalLoanEmi() {
+    if (this.financialSummary?.totalLoanEmi !== undefined) {
+      return Number(this.financialSummary.totalLoanEmi || 0);
+    }
+
+    return this.request?.expenseRequest?.loans?.reduce(
+      (sum: number, loan: any) =>
+        sum + this.calculateLoanEmi(Number(loan.loanAmount) || 0, Number(loan.interestRate) || 0, Number(loan.tenureMonths) || 0),
+      0
+    ) || 0;
+  }
+
+  getMonthlyEmergencyContribution() {
+    if (this.financialSummary?.monthlyEmergencyContribution !== undefined) {
+      return Number(this.financialSummary.monthlyEmergencyContribution || 0);
+    }
+
+    return Number(this.request?.expenseRequest?.emergencyFund) || 0;
+  }
+
+  getDisposableIncome() {
+    if (this.financialSummary?.disposableIncome !== undefined) {
+      return Number(this.financialSummary.disposableIncome || 0);
+    }
+
+    if (!this.request?.expenseRequest) {
+      return 0;
+    }
+
+    return (
+      Number(this.request.expenseRequest.monthlyIncome || 0)
+      - this.getTotalExpenses()
+      - this.getTotalLoanEmi()
+      - this.getMonthlyEmergencyContribution()
+    );
+  }
+
+  getMonthlyIncome() {
+    return this.financialSummary?.monthlyIncome ?? this.request?.expenseRequest?.monthlyIncome ?? 0;
+  }
+
+  getLoanMonthsSinceSanction(loan: any) {
+    if (loan?.monthsSinceSanction !== undefined) {
+      return loan.monthsSinceSanction;
+    }
+
+    if (!loan?.sanctionDate) {
+      return '-';
+    }
+
+    const parsedDate = this.parseSanctionDate(loan.sanctionDate);
+    if (!parsedDate) {
+      return '-';
+    }
+
+    const now = new Date();
+    const years = now.getFullYear() - parsedDate.getFullYear();
+    const months = now.getMonth() - parsedDate.getMonth();
+    return years * 12 + months;
+  }
+
+  getLoanRemainingTenure(loan: any) {
+    return loan?.remainingTenureMonths !== undefined ? loan.remainingTenureMonths : loan?.tenureMonths;
+  }
+
+  private parseSanctionDate(value: string) {
+    if (!value) {
+      return null;
+    }
+
+    if (/^\d{2}-\d{2}-\d{4}$/.test(value)) {
+      const [day, month, year] = value.split('-').map(Number);
+      return new Date(year, month - 1, day);
+    }
+
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
   }
 
   getGoalLabel() {
@@ -172,12 +288,82 @@ export class StrategyList implements OnInit {
   }
 
   getPriorityTitle(priority: string) {
-    return priority.replace(/^\d+\.\s*/, '').split(/->|→/)[0].trim();
+    const text = priority.replace(/^\d+\.\s*/, '').trim();
+    const titlePart = text.split(/->|→/)[0].trim();
+    return titlePart.split('(')[0].trim();
+  }
+
+  private getPriorityLoan(priority: string) {
+    const title = this.getPriorityTitle(priority);
+    const loans = this.getLoanDetails();
+    return loans.find((loan: any) => String(loan.loanName || '').trim() === title);
+  }
+
+  private extractInterestRateFromPriority(priority: string): number | null {
+    const match = priority.match(/([0-9]+(?:\.[0-9]+)?)%/);
+    return match ? Number(match[1]) : null;
+  }
+
+  private getPriorityStrategy(priority: string) {
+    const title = this.getPriorityTitle(priority);
+    return this.strategies.find((strategy: any) => String(strategy.loanName || '').trim() === title);
+  }
+
+  private formatPriorityEmi(value: number) {
+    return value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   getPriorityNote(priority: string) {
-    const parts = priority.split(/->|→/);
-    return parts[1]?.trim() || 'Priority loan';
+    const loan = this.getPriorityLoan(priority);
+    const strategy = this.getPriorityStrategy(priority);
+    const fallbackText = priority.replace(/^\d+\.\s*/, '').trim();
+    const parts = fallbackText.split(/->|→/);
+    if (parts.length > 1) {
+      return parts[1].trim();
+    }
+
+    const parenthesesMatch = fallbackText.match(/\(([^)]+)\)/);
+    const rawNote = parenthesesMatch?.[1]?.trim();
+
+    const interestRate = loan?.interestRate != null
+      ? Number(loan.interestRate)
+      : this.extractInterestRateFromPriority(priority);
+    const tenureMonths = this.getLoanRemainingTenure(loan);
+    const emiValue = strategy?.emi != null
+      ? Number(strategy.emi)
+      : loan?.loanAmount != null && interestRate != null && tenureMonths
+        ? this.calculateLoanEmi(Number(loan.loanAmount), interestRate, Number(tenureMonths))
+        : null;
+
+    if (interestRate != null && tenureMonths && emiValue != null) {
+      return `${interestRate}% , ${tenureMonths} months, EMI ₹${this.formatPriorityEmi(emiValue)}`;
+    }
+
+    return rawNote || 'Priority loan';
+  }
+
+  private getExtraEmiTargetLoan(): string | null {
+    const loans = this.request?.expenseRequest?.loans || [];
+    const targetFromPriority = this.loanPriority.length ? this.getPriorityTitle(this.loanPriority[0]) : null;
+
+    if (targetFromPriority) {
+      const normalizedTarget = targetFromPriority.trim();
+      const matchedLoan = loans.find(
+        (loan: any) => String(loan.loanName || '').trim() === normalizedTarget
+      );
+
+      return matchedLoan ? String(matchedLoan.loanName).trim() : normalizedTarget;
+    }
+
+    if (!loans.length) {
+      return null;
+    }
+
+    const highestInterestLoan = [...loans].sort(
+      (a: any, b: any) => (b.interestRate || 0) - (a.interestRate || 0)
+    )[0];
+
+    return String(highestInterestLoan.loanName || '').trim() || null;
   }
 
   private buildActionPayload(): LoanRequest {
@@ -307,6 +493,7 @@ export class StrategyList implements OnInit {
     lines.push('--- Advice ---');
     lines.push(`Summary: ${this.advice?.summary || '-'}`);
     lines.push(`Extra EMI Recommended: ${this.formatCurrency(this.advice?.extraEmiRecommended)}`);
+    lines.push(`Extra EMI Target: ${this.extraEmiTargetLoan || '-'}`);
     lines.push(`Part Payment Plan: ${this.advice?.partPaymentPlan || '-'}`);
     lines.push(`Reason: ${this.reason || '-'}`);
     lines.push('');
@@ -428,7 +615,7 @@ export class StrategyList implements OnInit {
   }
 
   private buildAdviceViewModel() {
-    const loans = this.request?.expenseRequest?.loans || [];
+    const loans = this.getLoanDetails();
     const expenseRequest = this.request?.expenseRequest;
     const emergencyFundGap = Math.max(
       (expenseRequest?.emergencyFundTarget || 0) - (expenseRequest?.emergencyFund || 0),
@@ -445,9 +632,9 @@ export class StrategyList implements OnInit {
       );
     }
 
-    if (expenseRequest?.monthlyIncome) {
+    if (this.getMonthlyIncome()) {
       this.adviceContext.push(
-        `This recommendation is aligned to your goal to ${this.getGoalLabel()} using your monthly income of Rs ${expenseRequest.monthlyIncome.toLocaleString('en-IN')}.`
+        `This recommendation is aligned to your goal to ${this.getGoalLabel()} using your monthly income of Rs ${this.getMonthlyIncome().toLocaleString('en-IN')}.`
       );
     }
 
@@ -471,6 +658,10 @@ export class StrategyList implements OnInit {
       this.paymentPlan.push(
         `Add an extra EMI payment of Rs ${Number(this.advice.extraEmiRecommended).toLocaleString('en-IN')} each month on top of your regular EMI.`
       );
+
+      if (this.extraEmiTargetLoan) {
+        this.paymentPlan.push(`Pay the extra EMI toward ${this.extraEmiTargetLoan} first.`);
+      }
     }
 
     if (this.advice?.partPaymentPlan) {
