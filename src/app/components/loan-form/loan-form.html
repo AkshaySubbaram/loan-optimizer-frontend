@@ -194,125 +194,99 @@
           <p>Tell us about your cash flow, emergency fund, and active loans.</p>
         </div>
 
-        <div class="strategy-layout">
-          <div class="collection-card profile-card">
-            <div class="subsection-title">
-              <div>
-                <label>Financial Profile</label>
-                <p>Capture income and safety buffer before planning prepayments.</p>
-              </div>
-            </div>
-
-            <div class="field-grid">
-              <div class="form-group">
-                <label>Monthly Income (Rs)</label>
-                <input
-                  type="number"
-                  [(ngModel)]="expenseRequest.monthlyIncome"
-                  required
-                  #monthlyIncome="ngModel"
-                  placeholder="e.g., 2,00,000"
-                  inputmode="decimal"
-                  min="0"
-                  max="9999999999"
-                  step="0.001"
-                  (keydown)="preventInvalidNumberInput($event)"
-                  (input)="sanitizeNumericField($event)"
-                  [class.input-error]="isExpenseFieldInvalid(expenseRequest.monthlyIncome) && monthlyIncome.touched">
-                <div class="loan-amount-slider">
-                  <div class="slider-meta">
-                    <span>Adjust income quickly</span>
-                    <strong>{{ expenseRequest.monthlyIncome ?? 0 }}</strong>
-                  </div>
-                  <input
-                    type="range"
-                    [min]="monthlyIncomeSliderMin"
-                    [max]="monthlyIncomeSliderMax"
-                    [step]="monthlyIncomeSliderStep"
-                    [value]="expenseRequest.monthlyIncome ?? 0"
-                    (input)="updateMonthlyIncomeFromSlider($event)">
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label>Emergency Fund (Rs)</label>
-                <input
-                  type="number"
-                  [(ngModel)]="expenseRequest.emergencyFund"
-                  placeholder="e.g., 50,000"
-                  inputmode="decimal"
-                  min="0"
-                  max="9999999999"
-                  step="0.001"
-                  (keydown)="preventInvalidNumberInput($event)"
-                  (input)="sanitizeNumericField($event)"
-                  [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFund) && monthlyIncome.touched">
-              </div>
-
-              <div class="form-group">
-                <label>Emergency Fund Target (Rs)</label>
-                <input
-                  type="number"
-                  [(ngModel)]="expenseRequest.emergencyFundTarget"
-                  placeholder="e.g., 1,00,000"
-                  inputmode="decimal"
-                  min="0"
-                  max="9999999999"
-                  step="0.001"
-                  (keydown)="preventInvalidNumberInput($event)"
-                  (input)="sanitizeNumericField($event)"
-                  [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFundTarget) && monthlyIncome.touched">
-              </div>
-
-              <div class="form-group">
-                <label>Emergency Fund Months</label>
-                <input
-                  type="number"
-                  [(ngModel)]="expenseRequest.emergencyFundMonths"
-                  placeholder="e.g., 12"
-                  inputmode="numeric"
-                  min="0"
-                  max="999"
-                  step="1"
-                  (keydown)="preventInvalidNumberInput($event)"
-                  (input)="sanitizeSmallIntegerField($event)"
-                  [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFundMonths) && monthlyIncome.touched">
-              </div>
-            </div>
+        <div class="collection-card unified-profile-card">
+          <div class="subsection-title">
+            <label>Financial Profile & Strategy</label>
           </div>
 
-          <div class="collection-card profile-card accent-card">
-            <div class="subsection-title">
-              <div>
-                <label>Strategy Preferences</label>
-                <p>Set how aggressive or comfort-first the recommendation should be.</p>
+          <div class="field-grid">
+            <div class="form-group">
+              <label>Monthly Income</label>
+              <input
+                type="number"
+                [(ngModel)]="expenseRequest.monthlyIncome"
+                required
+                #monthlyIncome="ngModel"
+                placeholder="Income"
+                inputmode="decimal"
+                (input)="sanitizeNumericField($event)"
+                [class.input-error]="isExpenseFieldInvalid(expenseRequest.monthlyIncome) && monthlyIncome.touched">
+            </div>
+
+            <div class="form-group">
+              <label>Emergency Fund</label>
+              <input
+                type="number"
+                [(ngModel)]="expenseRequest.emergencyFund"
+                placeholder="Current EF"
+                inputmode="decimal"
+                (input)="sanitizeNumericField($event)"
+                [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFund) && monthlyIncome.touched">
+            </div>
+
+            <div class="form-group full-width income-slider-row">
+              <div class="loan-amount-slider">
+                <div class="slider-meta">
+                  <span>Slide to adjust income</span>
+                  <strong>{{ expenseRequest.monthlyIncome ?? 0 | number }}</strong>
+                </div>
+                <input
+                  type="range"
+                  [min]="monthlyIncomeSliderMin"
+                  [max]="monthlyIncomeSliderMax"
+                  [step]="monthlyIncomeSliderStep"
+                  [value]="expenseRequest.monthlyIncome ?? 0"
+                  (input)="updateMonthlyIncomeFromSlider($event)">
               </div>
             </div>
 
-            <div class="field-grid compact-grid">
-              <div class="form-group">
-                <label>Risk Profile</label>
-                <select
-                  [(ngModel)]="expenseRequest.riskProfile"
-                  (ngModelChange)="saveFormState()"
-                  [class.input-error]="isExpenseFieldInvalid(expenseRequest.riskProfile)">
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
-              </div>
+            <div class="form-group">
+              <label>EF Target (Rs)</label>
+              <input
+                type="number"
+                [(ngModel)]="expenseRequest.emergencyFundTarget"
+                placeholder="Target"
+                inputmode="decimal"
+                (input)="sanitizeNumericField($event)"
+                [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFundTarget) && monthlyIncome.touched">
+            </div>
 
-              <div class="form-group">
-                <label>Goal</label>
-                <select
-                  [(ngModel)]="expenseRequest.goal"
-                  (ngModelChange)="saveFormState()"
-                  [class.input-error]="isExpenseFieldInvalid(expenseRequest.goal)">
-                  <option value="LOW_EMI">Lower EMI</option>
-                  <option value="MIN_INTEREST">Minimize Interest</option>
-                  <option value="SHORT_TENURE">Close Faster</option>
-                </select>
-              </div>
+            <div class="form-group">
+              <label>EF Months</label>
+              <input
+                type="number"
+                [(ngModel)]="expenseRequest.emergencyFundMonths"
+                placeholder="Months"
+                inputmode="numeric"
+                (input)="sanitizeSmallIntegerField($event)"
+                [class.input-error]="isExpenseFieldInvalid(expenseRequest.emergencyFundMonths) && monthlyIncome.touched">
+            </div>
+
+            <div class="form-group divider-row full-width">
+              <hr>
+              <label class="mini-label">Strategy Preferences</label>
+            </div>
+
+            <div class="form-group">
+              <label>Risk Profile</label>
+              <select
+                [(ngModel)]="expenseRequest.riskProfile"
+                (ngModelChange)="saveFormState()">
+                <option value="low">Low</option>
+                <option value="medium">Med</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Repayment Goal</label>
+              <select
+                [(ngModel)]="expenseRequest.goal"
+                (ngModelChange)="saveFormState()">
+                <option value="LOW_EMI">Lower EMI</option>
+                <option value="MIN_INTEREST">Min Interest</option>
+                <option value="SHORT_TENURE">Close Fast</option>
+              </select>
             </div>
           </div>
         </div>
@@ -423,11 +397,14 @@
                 (keydown)="preventInvalidNumberInput($event)"
                 (input)="sanitizeTenureField($event)"
                 [class.input-error]="isLoanItemInvalid(i) && (loan.tenureMonths === null || loan.tenureMonths === undefined)">
-              <input
-                type="date"
-                [(ngModel)]="loan.sanctionDate"
-                (ngModelChange)="saveFormState()"
-                >
+              <div class="full-width">
+                <label style="font-size: 10px; margin-bottom: 2px; display: block;">Sanction Date</label>
+                <input
+                  type="date"
+                  [(ngModel)]="loan.sanctionDate"
+                  (ngModelChange)="saveFormState()"
+                  >
+              </div>
             </div>
           </div>
         </div>
