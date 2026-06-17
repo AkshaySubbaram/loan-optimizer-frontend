@@ -77,6 +77,15 @@ button:focus-visible {
   animation: fadeIn 0.45s ease;
 }
 
+.app-container.mobile-mode {
+  max-width: 480px;
+  padding: 12px 12px 28px;
+}
+
+.app-container.mobile-mode .app-wrapper {
+  max-width: 100%;
+}
+
 .app-header-shell {
   position: sticky;
   top: 18px;
@@ -137,6 +146,16 @@ button:focus-visible {
 
 .theme-toggle .header-icon {
   font-size: 18px;
+}
+
+.mode-toggle {
+  background: linear-gradient(135deg, #eefdf6, #edf7ff);
+  color: #175c45;
+}
+
+.mode-toggle:hover {
+  background: linear-gradient(135deg, #e4f8ef, #e3f1ff);
+  border-color: rgba(46, 166, 111, 0.25);
 }
 
 .header-actions {
@@ -317,6 +336,131 @@ button:focus-visible {
   width: 100%;
   max-width: 1240px;
   margin: 0 auto;
+}
+
+.app-container.mobile-mode .app-header-shell {
+  top: 10px;
+  margin-bottom: 14px;
+}
+
+.app-container.mobile-mode .app-header {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: 18px;
+}
+
+.app-container.mobile-mode .brand-block {
+  width: 100%;
+  justify-content: center;
+}
+
+.app-container.mobile-mode .brand-mark {
+  width: 112px;
+  height: 72px;
+}
+
+.app-container.mobile-mode .header-title-card {
+  min-width: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.app-container.mobile-mode .header-actions {
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+
+.app-container.mobile-mode .header-action {
+  width: auto;
+  min-width: 42px;
+  padding: 8px 10px;
+  justify-content: center;
+}
+
+.app-container.mobile-mode .header-action span:not(.header-icon) {
+  display: none;
+}
+
+.app-container.mobile-mode .header-action .header-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.app-container.mobile-mode .header-action.mode-toggle,
+.app-container.mobile-mode .header-action.theme-toggle {
+  padding: 8px 10px;
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    padding: 14px 14px 28px;
+  }
+
+  .app-header-shell {
+    top: 10px;
+    margin-bottom: 14px;
+  }
+
+  .app-header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    border-radius: 18px;
+  }
+
+  .brand-block {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .brand-mark {
+    width: 112px;
+    height: 72px;
+  }
+
+  .header-title-card {
+    min-width: 0;
+    text-align: center;
+  }
+
+  .header-actions {
+    justify-content: center;
+  }
+
+  .home-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .home-btn-copy small {
+    text-align: center;
+  }
+
+  .faq-overlay {
+    padding: 12px;
+  }
+
+  .faq-panel {
+    max-height: 88vh;
+    border-radius: 18px;
+  }
+
+  .faq-header {
+    padding: 18px 18px 14px;
+  }
+
+  .faq-list {
+    max-height: calc(88vh - 130px);
+    padding: 14px 18px 18px;
+  }
+
+  .faq-item {
+    grid-template-columns: 1fr;
+  }
 }
 
 .faq-overlay {

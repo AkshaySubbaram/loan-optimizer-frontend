@@ -1,4 +1,4 @@
-import { Component, signal, OnInit, effect, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, signal, OnInit, effect, Inject, PLATFORM_ID, computed } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Router } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
@@ -13,6 +13,9 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 export class App implements OnInit {
   protected readonly title = signal('loan-frontend');
   isDarkMode = signal<boolean>(true);
+  uiMode = signal<'web' | 'mobile'>('web');
+  readonly isWebMode = computed(() => this.uiMode() === 'web');
+  readonly isMobileMode = computed(() => this.uiMode() === 'mobile');
   showFaq = signal<boolean>(false);
   readonly faqItems = [
     {
@@ -93,20 +96,32 @@ export class App implements OnInit {
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
       }
     });
+
+    effect(() => {
+      if (isPlatformBrowser(this.platformId)) {
+        localStorage.setItem('uiMode', this.uiMode());
+      }
+    });
   }
 
   ngOnInit() {
     // Load saved theme preference (only on browser)
     if (isPlatformBrowser(this.platformId)) {
       const savedTheme = localStorage.getItem('theme');
+      const savedUiMode = localStorage.getItem('uiMode');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       const theme = savedTheme || (prefersDark ? 'dark' : 'light');
       this.isDarkMode.set(theme === 'dark');
+      this.uiMode.set(savedUiMode === 'mobile' ? 'mobile' : 'web');
     }
   }
 
   toggleTheme() {
     this.isDarkMode.set(!this.isDarkMode());
+  }
+
+  toggleUiMode() {
+    this.uiMode.set(this.isMobileMode() ? 'web' : 'mobile');
   }
 
   goHome() {

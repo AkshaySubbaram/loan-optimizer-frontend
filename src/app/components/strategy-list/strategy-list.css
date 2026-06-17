@@ -578,3 +578,91 @@
     grid-template-columns: 1fr;
   }
 }
+
+:host-context(.mobile-mode) .strategy-card {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 16px;
+}
+
+:host-context(.mobile-mode) .strategy-content {
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+}
+
+:host-context(.mobile-mode) .details-grid {
+  grid-template-columns: 1fr;
+}
+
+:host-context(.mobile-mode) .chart-section {
+  width: 100%;
+}
+
+:host-context(.mobile-mode) .chart-container {
+  width: 100%;
+  height: 240px;
+}
+
+:host-context(.mobile-mode) .chart-values {
+  flex-direction: column;
+}
+
+:host-context(.mobile-mode) .value-box {
+  width: 100%;
+}
+
+:host-context(.mobile-mode) .top-bar {
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
+}
+
+:host-context(.mobile-mode) .actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+:host-context(.mobile-mode) .home-btn,
+:host-context(.mobile-mode) .download-btn,
+:host-context(.mobile-mode) .strategy-mode-badge {
+  width: 100%;
+  min-width: 0;
+}
+
+:host-context(.mobile-mode) .advice-panel,
+:host-context(.mobile-mode) .recommended-panel,
+:host-context(.mobile-mode) .insight-panel,
+:host-context(.mobile-mode) .no-strategies {
+  padding: 16px;
+  border-radius: 16px;
+}
+
+:host-context(.mobile-mode) .advice-hero {
+  flex-direction: column;
+}
+
+:host-context(.mobile-mode) .advice-highlight {
+  width: 100%;
+  min-width: 0;
+}
+
+:host-context(.mobile-mode) .advice-metrics,
+:host-context(.mobile-mode) .advice-grid,
+:host-context(.mobile-mode) .priority-list {
+  grid-template-columns: 1fr;
+}
+
+:host-context(.mobile-mode) .priority-strip {
+  padding: 14px;
+}
+
+:host-context(.mobile-mode) .advice-block,
+:host-context(.mobile-mode) .metric-card,
+:host-context(.mobile-mode) .priority-item {
+  padding: 14px;
+}
+
+:host-context(.mobile-mode) .full-span {
+  grid-column: 1 / -1;
+}

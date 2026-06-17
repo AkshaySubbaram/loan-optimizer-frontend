@@ -48,3 +48,28 @@
 .amort-card tbody tr:nth-child(even) {
   background-color: #f9f9f9;
 }
+
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+:host-context(.mobile-mode) .amort-card {
+  padding: 12px;
+  border-radius: 16px;
+}
+
+:host-context(.mobile-mode) .amort-card h2 {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+:host-context(.mobile-mode) .amort-card table {
+  min-width: 540px;
+  font-size: 13px;
+}
+
+:host-context(.mobile-mode) .amort-card th,
+:host-context(.mobile-mode) .amort-card td {
+  padding: 10px;
+}
