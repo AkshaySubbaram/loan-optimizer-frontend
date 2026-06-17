@@ -444,7 +444,7 @@ export class LoanForm implements OnInit {
   }
 
   isExpenseFieldInvalid(value: string | number | null | undefined) {
-    if (!this.hasTriedSubmit || this.useIncomeStrategy !== true) {
+    if (this.useIncomeStrategy !== true) {
       return false;
     }
 

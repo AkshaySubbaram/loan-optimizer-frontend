@@ -1,4 +1,4 @@
-<div class="app-container">
+<div class="app-container" [class.web-mode]="isWebMode()" [class.mobile-mode]="isMobileMode()">
   <div class="app-header-shell">
     <div class="app-header">
       <div class="brand-block" role="button" tabindex="0" (click)="goHome()" (keyup.enter)="goHome()">
@@ -26,6 +26,15 @@
             </svg>
           </span>
           <span>Ask Alien</span>
+        </button>
+        <button
+          type="button"
+          class="header-action mode-toggle"
+          (click)="toggleUiMode()"
+          [attr.aria-label]="isMobileMode() ? 'Switch to Web Mode' : 'Switch to Mobile Mode'"
+          [attr.aria-pressed]="isMobileMode()">
+          <span class="header-icon">{{ isMobileMode() ? '📱' : '🖥️' }}</span>
+          <span>{{ isMobileMode() ? 'Web Mode' : 'Mobile Mode' }}</span>
         </button>
         <button 
           type="button" 
