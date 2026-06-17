@@ -1,50 +1,78 @@
 .amort-card {
   margin-bottom: 24px;
   padding: 16px;
-  border-radius: 12px;
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid rgba(20, 41, 36, 0.08);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  overflow: hidden;
 }
 
 .amort-card h2 {
   margin: 0 0 16px;
-  font-size: 18px;
-  color: #2c3e50;
+  font-size: 20px;
+  color: #17392f;
+  font-weight: 700;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -16px;
+  padding: 0 16px;
 }
 
 .amort-card table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  min-width: 450px;
 }
 
 .amort-card thead {
-  background-color: #f0f1f3;
+  background-color: #f7fbf8;
 }
 
 .amort-card th {
-  padding: 12px;
+  padding: 14px 10px;
   text-align: left;
-  font-weight: 600;
-  color: #2c3e50;
-  border-bottom: 2px solid #dee2e6;
+  font-weight: 700;
+  color: #17392f;
+  border-bottom: 2px solid #e9f6ef;
 }
 
 .amort-card td {
-  padding: 12px;
-  border-bottom: 1px solid #dee2e6;
+  padding: 14px 10px;
+  border-bottom: 1px solid #f0f4f2;
   text-align: right;
+  color: #2c3e50;
 }
 
 .amort-card td:first-child {
   text-align: center;
-  font-weight: 600;
+  font-weight: 700;
+  color: #1f7a58;
 }
 
-.amort-card tbody tr:hover {
-  background-color: #f8f9fa;
+.amort-card tbody tr:active {
+  background-color: #e9f6ef;
 }
 
 .amort-card tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background-color: #fbfdfc;
+}
+
+@media (max-width: 768px) {
+  .amort-card {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .amort-card table {
+    font-size: 13px;
+  }
+
+  .amort-card th, .amort-card td {
+    padding: 12px 8px;
+  }
 }

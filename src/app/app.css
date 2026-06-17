@@ -6,16 +6,23 @@
 
 :root {
   color-scheme: light;
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-inset-left: env(safe-area-inset-left, 0px);
+  --safe-area-inset-right: env(safe-area-inset-right, 0px);
 }
 
 body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background:
     radial-gradient(circle at top left, rgba(255, 235, 150, 0.12), transparent 35%),
     radial-gradient(circle at top right, rgba(100, 200, 255, 0.1), transparent 30%),
     linear-gradient(180deg, #f0f8f0, #e8f4f8 50%, #f5f9fa 100%);
   color: #1a3a2e;
   min-height: 100vh;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
 }
 
 body::before {
@@ -72,6 +79,9 @@ button:focus-visible {
 .app-container {
   min-height: 100vh;
   padding: 24px 18px 36px;
+  padding-left: calc(18px + var(--safe-area-inset-left));
+  padding-right: calc(18px + var(--safe-area-inset-right));
+  padding-bottom: calc(36px + var(--safe-area-inset-bottom));
   max-width: 1200px;
   margin: 0 auto;
   animation: fadeIn 0.45s ease;
@@ -79,10 +89,14 @@ button:focus-visible {
 
 .app-header-shell {
   position: sticky;
-  top: 18px;
+  top: 0;
   z-index: 1000;
   margin: 0 auto 20px;
   max-width: 1200px;
+  padding-top: var(--safe-area-inset-top);
+  background: rgba(245, 250, 252, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .app-header {
@@ -434,68 +448,106 @@ button:focus-visible {
 
 @media (max-width: 768px) {
   .app-container {
-    padding: 14px 14px 28px;
+    padding: 8px 8px 24px;
+    padding-left: calc(8px + var(--safe-area-inset-left));
+    padding-right: calc(8px + var(--safe-area-inset-right));
+    padding-bottom: calc(24px + var(--safe-area-inset-bottom));
   }
 
   .app-header-shell {
-    top: 10px;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
   }
 
   .app-header {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    border-radius: 18px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 0 0 16px 16px;
+    border-top: none;
+    box-shadow: 0 2px 10px rgba(22, 53, 43, 0.04);
   }
 
   .brand-block {
-    width: 100%;
-    justify-content: center;
+    min-width: 0;
+    padding: 2px;
+    background: none;
+    border: none;
+    gap: 2px;
   }
 
   .brand-mark {
-    width: 112px;
-    height: 72px;
+    width: 40px;
+    height: 28px;
+    border-radius: 6px;
+  }
+
+  .brand-copy strong {
+    font-size: 11px;
   }
 
   .header-title-card {
+    padding: 2px 4px;
+    background: none;
+    border: none;
+    width: auto;
     min-width: 0;
-    text-align: center;
+  }
+
+  .header-title-card h1 {
+    font-size: 0.95rem;
+    text-align: left;
+    margin: 0;
+  }
+
+  .header-title-card p {
+    display: none;
   }
 
   .header-actions {
+    gap: 2px;
+  }
+
+  .header-action {
+    padding: 6px;
+    border-radius: 10px;
+    min-width: 36px;
+    min-height: 36px;
     justify-content: center;
   }
 
-  .home-btn {
-    width: 100%;
-    justify-content: center;
+  .header-action span:not(.header-icon) {
+    display: none;
   }
 
-  .home-btn-copy small {
-    text-align: center;
+  .header-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    background: none;
   }
 
   .faq-overlay {
-    padding: 12px;
+    padding: 8px;
   }
 
   .faq-panel {
-    max-height: 88vh;
-    border-radius: 18px;
+    max-height: 90vh;
+    border-radius: 16px;
   }
 
   .faq-header {
-    padding: 18px 18px 14px;
+    padding: 14px 16px 10px;
   }
 
   .faq-list {
-    max-height: calc(88vh - 130px);
-    padding: 14px 18px 18px;
+    max-height: calc(90vh - 110px);
+    padding: 10px 16px 16px;
   }
 
   .faq-item {
     grid-template-columns: 1fr;
+    padding: 12px;
+    border-radius: 14px;
   }
 }

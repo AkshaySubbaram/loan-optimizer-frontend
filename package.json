@@ -7,7 +7,9 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:loan-frontend": "node dist/loan-frontend/server/server.mjs"
+    "serve:ssr:loan-frontend": "node dist/loan-frontend/server/server.mjs",
+    "cap:copy": "npx cap copy",
+    "android": "npm run build && npx cap copy android && npx cap open android"
   },
   "private": true,
   "packageManager": "npm@11.8.0",
@@ -20,6 +22,9 @@
     "@angular/platform-server": "^21.2.0",
     "@angular/router": "^21.2.0",
     "@angular/ssr": "^21.2.3",
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/cli": "^8.4.0",
+    "@capacitor/core": "^8.4.0",
     "chart.js": "^4.5.1",
     "express": "^5.1.0",
     "ng2-charts": "^5.0.4",

@@ -120,12 +120,12 @@
   justify-content: space-between;
   align-items: center;
   gap: 14px;
-  margin-bottom: 25px;
-  padding: 14px;
+  margin-bottom: 20px;
+  padding: 12px;
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.86);
   border: 1px solid rgba(114, 167, 156, 0.22);
-  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.05);
 }
 
 /* RIGHT SIDE ACTIONS */
@@ -156,17 +156,17 @@
 }
 
 .top-bar button:active {
-  transform: translateY(0);
+  transform: scale(0.98);
 }
 
 .home-btn {
-  min-width: 230px;
+  min-width: 200px;
   justify-content: flex-start;
   padding: 11px 16px 11px 12px;
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent),
     linear-gradient(135deg, #14372c, #287256);
-  box-shadow: 0 16px 30px rgba(24, 87, 61, 0.28);
+  box-shadow: 0 12px 24px rgba(24, 87, 61, 0.2);
 }
 
 .home-btn-copy strong,
@@ -538,12 +538,20 @@
   .top-bar {
     flex-direction: column;
     gap: 10px;
-    align-items: stretch;
+    padding: 12px;
+    margin-bottom: 12px;
   }
 
   .actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .top-bar button {
+    min-height: 48px;
+    padding: 8px 12px;
+    border-radius: 12px;
   }
 
   .home-btn {
@@ -554,27 +562,106 @@
   .strategy-mode-badge {
     width: 100%;
     margin: 0;
+    padding: 8px;
+    border-radius: 10px;
   }
 
-  .download-btn {
-    min-width: 0;
+  .strategy-mode-badge strong {
+    font-size: 13px;
+  }
+
+  .advice-panel {
+    padding: 16px;
+    margin-bottom: 12px;
+    border-radius: 16px;
   }
 
   .advice-hero {
     flex-direction: column;
+    gap: 12px;
+  }
+
+  .advice-eyebrow {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  .advice-panel h3 {
+    font-size: 18px;
+  }
+
+  .advice-summary {
+    font-size: 13px;
   }
 
   .advice-highlight {
     width: 100%;
     min-width: 0;
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .advice-highlight strong {
+    font-size: 16px;
   }
 
   .advice-metrics,
   .advice-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .metric-card {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .metric-card strong {
+    font-size: 18px;
+    margin-top: 4px;
+  }
+
+  .priority-strip {
+    padding: 12px;
+    margin-top: 12px;
   }
 
   .priority-list {
     grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .priority-item {
+    padding: 10px;
+  }
+
+  .strategy-card {
+    padding: 14px;
+    border-radius: 16px;
+    margin-top: 12px;
+  }
+
+  .strategy-title {
+    font-size: 16px;
+  }
+
+  .details-grid {
+    font-size: 13px;
+    gap: 8px;
+  }
+
+  .chart-container {
+    width: 200px;
+    height: 200px;
+  }
+
+  .value-box {
+    padding: 6px 10px;
+    min-width: 0;
+  }
+
+  .value-box strong {
+    font-size: 13px;
   }
 }

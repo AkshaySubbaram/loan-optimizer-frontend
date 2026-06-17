@@ -341,13 +341,14 @@
 input,
 select {
   width: 100%;
-  padding: 8px 10px;
+  padding: 12px 14px;
   border-radius: 12px;
   border: 1px solid #d7e2dd;
   background: #fbfcfb;
   color: #17392f;
-  font-size: 13px;
+  font-size: 16px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+  appearance: none;
 }
 
 input::placeholder {
@@ -523,7 +524,18 @@ select:focus {
 .reset-btn {
   border: none;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
+}
+
+.add-btn:active,
+.remove-btn:active,
+.calculate-btn:active,
+.reset-btn:active {
+  transform: scale(0.98);
 }
 
 .add-btn {
@@ -590,6 +602,8 @@ select:focus {
   font-weight: 800;
   box-shadow: 0 12px 22px rgba(28, 69, 57, 0.16);
 }
+
+.calculate-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 18px 28px rgba(246, 183, 60, 0.26);
 }
@@ -646,39 +660,265 @@ select:focus {
   }
 }
 
+.unified-profile-card {
+  border: 1px solid rgba(23, 57, 47, 0.12);
+  background: linear-gradient(180deg, #ffffff, #fcfdfd);
+}
+
+.divider-row {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.divider-row hr {
+  border: 0;
+  border-top: 1px solid rgba(23, 57, 47, 0.08);
+  margin: 4px 0;
+}
+
+.mini-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #1f7a58;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+
 @media (max-width: 768px) {
   .loan-page {
-    padding: 20px 14px 36px;
+    padding: 6px 4px 24px;
   }
 
-  .hero-panel,
-  .loan-card,
-  .section-shell {
-    padding: 16px;
-    border-radius: 18px;
+  .hero-panel {
+    padding: 10px;
+    border-radius: 14px;
+    margin-bottom: 8px;
+    gap: 8px;
   }
 
-  .mode-switcher {
-    grid-template-columns: 1fr;
-  }
-
-  .strategy-layout,
-  .field-grid,
-  .part-row,
-  .dynamic-row,
-  .loan-entry-grid,
-  .live-strategy-layout,
-  .normal-chart-values {
-    grid-template-columns: 1fr;
-  }
-
-  .subsection-title,
-  .mode-banner,
-  .loan-entry-header {
-    flex-direction: column;
+  .eyebrow {
+    margin-bottom: 4px;
+    padding: 4px 8px;
   }
 
   .hero-copy h1 {
-    font-size: 1.85rem;
+    font-size: 1.3rem;
+    margin-bottom: 4px;
+  }
+
+  .hero-copy p {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .hero-focus {
+    gap: 6px;
+  }
+
+  .focus-card {
+    padding: 8px 10px;
+    border-radius: 10px;
+  }
+
+  .focus-card strong {
+    font-size: 14px;
+    margin: 2px 0;
+  }
+
+  .focus-card small {
+    font-size: 11px;
+  }
+
+  .loan-card {
+    padding: 8px;
+    border-radius: 16px;
+    margin-bottom: 10px;
+  }
+
+  .section-shell {
+    padding: 10px;
+    border-radius: 14px;
+    margin-bottom: 8px;
+  }
+
+  .card-header {
+    margin-bottom: 6px;
+    gap: 8px;
+  }
+
+  .card-header h2 {
+    font-size: 1.15rem;
+  }
+
+  .card-header p {
+    font-size: 11px;
+  }
+
+  .mode-switcher {
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .mode-option {
+    padding: 8px;
+    border-radius: 10px;
+    gap: 6px;
+  }
+
+  .mode-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 11px;
+  }
+
+  .mode-content strong {
+    font-size: 12px;
+  }
+
+  .mode-content small {
+    font-size: 10px;
+    margin-top: 1px;
+    line-height: 1.2;
+  }
+
+  .mode-banner {
+    padding: 6px 8px;
+    font-size: 11px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+  }
+
+  .section-header {
+    margin-bottom: 6px;
+  }
+
+  .section-header h3 {
+    font-size: 15px;
+  }
+
+  .section-header p {
+    font-size: 11px;
+  }
+
+  .field-grid {
+    gap: 8px;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+
+  .income-slider-row {
+    grid-column: span 2;
+    margin-bottom: 4px;
+  }
+
+  .form-group label,
+  .subsection-title label {
+    margin-bottom: 3px;
+    font-size: 10px;
+  }
+
+  input,
+  select {
+    padding: 8px 10px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+
+  .loan-amount-slider {
+    padding: 6px;
+    margin-top: 4px;
+  }
+
+  .slider-meta {
+    margin-bottom: 2px;
+    font-size: 10px;
+  }
+
+  .collection-card,
+  .form-group.full-width {
+    margin-top: 8px;
+    padding: 8px;
+    border-radius: 10px;
+  }
+
+  .subsection-title {
+    margin-bottom: 4px;
+  }
+
+  .subsection-title p {
+    display: none;
+  }
+
+  .subsection-title label {
+    font-size: 11px;
+    color: #1f7a58;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .unified-profile-card {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  }
+
+  .part-row, .dynamic-row {
+    padding: 8px;
+    gap: 8px;
+    margin-bottom: 4px;
+    grid-template-columns: 1fr 1fr auto !important;
+  }
+
+  .loan-entry {
+    padding: 8px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+  }
+
+  .loan-entry-header {
+    margin-bottom: 6px;
+  }
+
+  .loan-entry-header strong {
+    font-size: 13px;
+  }
+
+  .loan-entry-header span {
+    font-size: 10px;
+  }
+
+  .loan-entry-grid {
+    gap: 8px;
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .calculate-btn {
+    padding: 12px;
+    font-size: 14px;
+    min-height: 44px;
+  }
+
+  .reset-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+    min-height: 32px;
+  }
+
+  .action-bar {
+    padding: 10px;
+    gap: 10px;
+    margin-top: 10px;
+    border-radius: 12px;
+  }
+
+  .action-copy strong {
+    font-size: 13px;
+  }
+
+  .action-copy span {
+    font-size: 10px;
+  }
+
+  .full-width {
+    grid-column: span 2;
   }
 }
